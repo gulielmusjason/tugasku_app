@@ -1,5 +1,3 @@
-// ignore_for_file: prefer_const_constructors
-
 import 'package:flutter/material.dart';
 import 'package:tugasku_app/signinpage.dart';
 import 'package:tugasku_app/themenotifier.dart';
@@ -93,7 +91,7 @@ class _MyAppState extends State<MyApp> {
               ),
             ),
             themeMode: themeNotifier!.value,
-            home: SignInPage(),
+            home: const SignInPage(),
           );
         },
       ),
