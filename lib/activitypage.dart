@@ -51,6 +51,7 @@ class _ActivityPageState extends State<ActivityPage> {
             title: Text(notification.sender),
             subtitle: Text(notification.message),
             trailing: Text(notification.time),
+            onTap: () {},
           );
         },
       ),
