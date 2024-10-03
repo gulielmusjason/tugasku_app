@@ -24,7 +24,7 @@ class _MyAppState extends State<MyApp> {
         builder: (context) {
           final themeNotifier = ThemeNotifierProvider.of(context);
           return MaterialApp(
-            title: 'TugasKu',
+            title: 'TugasKus',
             debugShowCheckedModeBanner: false,
             theme: ThemeData(
               useMaterial3: true,
