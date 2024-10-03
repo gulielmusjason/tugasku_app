@@ -73,21 +73,22 @@ class _TaskPageState extends State<TaskPage>
               padding: const EdgeInsets.all(8.0),
               child: Text(
                 '${date.day} ${_getMonthName(date.month)} ${date.year}',
-                style: Theme.of(context).textTheme.titleLarge,
+                style: Theme.of(context).textTheme.titleMedium,
               ),
             ),
-            ...tasks.map((task) => Material(
-                  color: Colors.transparent,
-                  child: InkWell(
-                    onTap: () {},
-                    child: ListTile(
-                      title: Text(task),
-                      subtitle: Text('Deskripsi $task'),
-                      trailing: Text(status),
-                    ),
+            ...tasks.map((task) {
+              return Material(
+                color: Colors.transparent,
+                child: InkWell(
+                  onTap: () {},
+                  child: ListTile(
+                    title: Text(task),
+                    subtitle: Text('Deskripsi $task'),
+                    trailing: Text(status),
                   ),
-                )),
-            const Divider(),
+                ),
+              );
+            }),
           ],
         );
       },
