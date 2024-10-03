@@ -1,6 +1,6 @@
 {
-    "name": "tugasku_app",
-    "short_name": "tugasku_app",
+    "name": "TugasKu",
+    "short_name": "TugasKu",
     "start_url": ".",
     "display": "standalone",
     "background_color": "#0175C2",
