@@ -5,8 +5,10 @@ class Notification {
   final String message;
   final String time;
 
-  Notification({required this.sender, required this.message, required this.time});
+  Notification(
+      {required this.sender, required this.message, required this.time});
 }
+
 //TESSSSS
 class ActivityPage extends StatefulWidget {
   const ActivityPage({super.key});
@@ -18,10 +20,20 @@ class ActivityPage extends StatefulWidget {
 class _ActivityPageState extends State<ActivityPage> {
   // Daftar notifikasi sementara
   final List<Notification> notifications = [
-    Notification(sender: "VALEROY", message: "Selamat sore semua, kalo ada pertanyaan...", time: "14.54"),
-    Notification(sender: "DEBBY", message: "Menyebutkan Grup Mahasiswa SI 2022", time: "10.46"),
-    Notification(sender: "Dr. Dedi Trisnawarman", message: "Updated an assignment", time: "Yesterday"),
-    Notification(sender: "hendra", message: "Scheduled a meeting", time: "Monday"),
+    Notification(
+        sender: "VALEROY",
+        message: "Selamat sore semua, kalo ada pertanyaan...",
+        time: "14.54"),
+    Notification(
+        sender: "DEBBY",
+        message: "Menyebutkan Grup Mahasiswa SI 2022",
+        time: "10.46"),
+    Notification(
+        sender: "Dr. Dedi Trisnawarman",
+        message: "Updated an assignment",
+        time: "Yesterday"),
+    Notification(
+        sender: "hendra", message: "Scheduled a meeting", time: "Monday"),
   ];
 
   @override
