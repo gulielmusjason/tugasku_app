@@ -33,8 +33,9 @@ class _SignUpPageState extends State<SignUpPage> {
                       ),
                     ),
                   ),
+                  const SizedBox(height: 20),
                   Text(
-                    "Create your account",
+                    "Buat Akun Kamu",
                     style: Theme.of(context).textTheme.titleLarge?.copyWith(
                           fontSize: 25,
                           fontWeight: FontWeight.bold,
@@ -46,7 +47,7 @@ class _SignUpPageState extends State<SignUpPage> {
                         top: 5, bottom: 5, right: 20, left: 20),
                     child: TextField(
                       decoration: InputDecoration(
-                        hintText: "Name",
+                        hintText: "Nama",
                         prefixIcon: Icon(Icons.person,
                             color: Theme.of(context).iconTheme.color),
                       ),
@@ -69,7 +70,7 @@ class _SignUpPageState extends State<SignUpPage> {
                     child: TextField(
                       obscureText: true,
                       decoration: InputDecoration(
-                        hintText: "Password",
+                        hintText: "Kata Sandi",
                         prefixIcon: Icon(Icons.lock,
                             color: Theme.of(context).iconTheme.color),
                       ),
@@ -82,7 +83,7 @@ class _SignUpPageState extends State<SignUpPage> {
                     child: TextField(
                       obscureText: true,
                       decoration: InputDecoration(
-                        hintText: "Confirm Password",
+                        hintText: "Konfirmasi Kata Sandi",
                         prefixIcon: Icon(Icons.lock,
                             color: Theme.of(context).iconTheme.color),
                       ),
@@ -107,7 +108,7 @@ class _SignUpPageState extends State<SignUpPage> {
                             ),
                           );
                         },
-                        child: const Text('SIGN UP'),
+                        child: const Text('DAFTAR'),
                       ),
                     ),
                   ),

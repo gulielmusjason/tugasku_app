@@ -28,6 +28,12 @@ class _MainAppState extends State<MainApp> {
     const ActivityPage(),
   ];
 
+  static final List<String> _appBarTitles = [
+    'Beranda',
+    'Tugas',
+    'Aktivitas',
+  ];
+
   void _onItemTapped(int index) {
     setState(() {
       _selectIndex = index;
@@ -42,6 +48,7 @@ class _MainAppState extends State<MainApp> {
       home: Scaffold(
         appBar: AppBar(
           backgroundColor: Theme.of(context).appBarTheme.backgroundColor,
+          title: Text(_appBarTitles[_selectIndex]),
           leading: Builder(
             builder: (BuildContext context) {
               return IconButton(
@@ -79,7 +86,7 @@ class _MainAppState extends State<MainApp> {
                 ),
                 ListTile(
                   leading: const Icon(Icons.settings),
-                  title: const Text('Settings'),
+                  title: const Text('Pengaturan'),
                   onTap: () {
                     Navigator.push(
                       context,
@@ -91,7 +98,7 @@ class _MainAppState extends State<MainApp> {
                 ),
                 ListTile(
                   leading: const Icon(Icons.logout),
-                  title: const Text('Sign Out'),
+                  title: const Text('Keluar'),
                   onTap: () {
                     Navigator.pop(context); // Tutup drawer
                     Navigator.push(
@@ -111,7 +118,7 @@ class _MainAppState extends State<MainApp> {
         ),
         bottomNavigationBar: BottomNavigationBar(
           items: const [
-            BottomNavigationBarItem(icon: Icon(Icons.home), label: "Home"),
+            BottomNavigationBarItem(icon: Icon(Icons.home), label: "Beranda"),
             BottomNavigationBarItem(icon: Icon(Icons.task), label: "Tugas"),
             BottomNavigationBarItem(
                 icon: Icon(Icons.notifications), label: "Aktivitas")

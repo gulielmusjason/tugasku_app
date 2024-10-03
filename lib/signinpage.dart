@@ -49,7 +49,7 @@ class _SignInPageState extends State<SignInPage> {
                     ),
                   ),
                   Text(
-                    "SIGN IN",
+                    "LOGIN",
                     style: Theme.of(context).textTheme.titleLarge?.copyWith(
                           fontSize: 35,
                           fontWeight: FontWeight.bold,
@@ -74,7 +74,7 @@ class _SignInPageState extends State<SignInPage> {
                       controller: _passwordController,
                       obscureText: _passwordVisible,
                       decoration: InputDecoration(
-                        hintText: "Password",
+                        hintText: "Kata Sandi",
                         prefixIcon: const Icon(Icons.lock),
                         suffixIcon: IconButton(
                           icon: Icon(_passwordVisible
@@ -107,14 +107,14 @@ class _SignInPageState extends State<SignInPage> {
                             ),
                           );
                         },
-                        child: const Text('SIGN IN'),
+                        child: const Text('LOGIN'),
                       ),
                     ),
                   ),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      const Text("Don't have an account?"),
+                      const Text("Tidak Punya Akun?"),
                       const SizedBox(width: 5),
                       Material(
                         color: Colors.transparent,
@@ -128,7 +128,7 @@ class _SignInPageState extends State<SignInPage> {
                             );
                           },
                           child: const Text(
-                            "Sign Up",
+                            "Daftar",
                             style: TextStyle(
                                 fontWeight: FontWeight.bold,
                                 color: Colors.brown),
