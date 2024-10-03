@@ -9,7 +9,6 @@ class Notification {
       {required this.sender, required this.message, required this.time});
 }
 
-//TESSSSS
 class ActivityPage extends StatefulWidget {
   const ActivityPage({super.key});
 
@@ -18,10 +17,9 @@ class ActivityPage extends StatefulWidget {
 }
 
 class _ActivityPageState extends State<ActivityPage> {
-  // Daftar notifikasi sementara
   final List<Notification> notifications = [
     Notification(
-        sender: "VALEROY",
+        sender: "VALERIE",
         message: "Selamat sore semua, kalo ada pertanyaan...",
         time: "14.54"),
     Notification(
@@ -48,7 +46,7 @@ class _ActivityPageState extends State<ActivityPage> {
           final notification = notifications[index];
           return ListTile(
             leading: CircleAvatar(
-              child: Text(notification.sender[0]), // Inisial pengirim
+              child: Text(notification.sender[0]),
             ),
             title: Text(notification.sender),
             subtitle: Text(notification.message),
@@ -58,10 +56,4 @@ class _ActivityPageState extends State<ActivityPage> {
       ),
     );
   }
-}
-
-void main() {
-  runApp(const MaterialApp(
-    home: ActivityPage(),
-  ));
 }
