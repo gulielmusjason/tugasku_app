@@ -51,21 +51,64 @@ class _TaskPageState extends State<TaskPage>
   }
 
   Widget _buildTaskList(String status) {
+    final Map<DateTime, List<String>> tasksByDate = {
+      DateTime(2023, 10, 3): [
+        'Tugas Matematika',
+        'Presentasi Sejarah',
+        'Laporan Kimia'
+      ],
+      DateTime(2023, 10, 4): ['Proyek Seni', 'Kuis Bahasa Inggris'],
+    };
+
     return ListView.builder(
-      itemCount: 10,
+      itemCount: tasksByDate.length,
       itemBuilder: (context, index) {
-        return Material(
-          color: Colors.transparent,
-          child: InkWell(
-            onTap: () {},
-            child: ListTile(
-              title: Text('Tugas $index'),
-              subtitle: Text('Deskripsi tugas $index'),
-              trailing: Text(status),
+        final date = tasksByDate.keys.elementAt(index);
+        final tasks = tasksByDate[date]!;
+
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Text(
+                '${date.day} ${_getMonthName(date.month)} ${date.year}',
+                style: Theme.of(context).textTheme.titleLarge,
+              ),
             ),
-          ),
+            ...tasks.map((task) => Material(
+                  color: Colors.transparent,
+                  child: InkWell(
+                    onTap: () {},
+                    child: ListTile(
+                      title: Text(task),
+                      subtitle: Text('Deskripsi $task'),
+                      trailing: Text(status),
+                    ),
+                  ),
+                )),
+            const Divider(),
+          ],
         );
       },
     );
+  }
+
+  String _getMonthName(int month) {
+    const monthNames = [
+      'Januari',
+      'Februari',
+      'Maret',
+      'April',
+      'Mei',
+      'Juni',
+      'Juli',
+      'Agustus',
+      'September',
+      'Oktober',
+      'November',
+      'Desember'
+    ];
+    return monthNames[month - 1];
   }
 }
