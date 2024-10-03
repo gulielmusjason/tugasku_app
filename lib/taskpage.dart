@@ -77,16 +77,11 @@ class _TaskPageState extends State<TaskPage>
               ),
             ),
             ...tasks.map((task) {
-              return Material(
-                color: Colors.transparent,
-                child: InkWell(
-                  onTap: () {},
-                  child: ListTile(
-                    title: Text(task),
-                    subtitle: Text('Deskripsi $task'),
-                    trailing: Text(status),
-                  ),
-                ),
+              return ListTile(
+                title: Text(task),
+                subtitle: Text('Deskripsi $task'),
+                trailing: Text(status),
+                onTap: () {},
               );
             }),
           ],
