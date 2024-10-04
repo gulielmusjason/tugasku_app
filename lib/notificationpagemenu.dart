@@ -1,20 +1,20 @@
 import 'package:flutter/material.dart';
 
 class Notifikasi {
-  final String pengirim;
+  final String namaKelas;
   final String pesan;
   final DateTime waktu;
-  final bool isDeadline;
-  final bool isNilai;
+  final TipeNotifikasi tipe;
 
   Notifikasi({
-    required this.pengirim,
+    required this.namaKelas,
     required this.pesan,
     required this.waktu,
-    this.isDeadline = false,
-    this.isNilai = false,
+    required this.tipe,
   });
 }
+
+enum TipeNotifikasi { nilaiTugas, tugasBaru, deadlineTugas, lainnya }
 
 class NotificationPageMenu extends StatefulWidget {
   const NotificationPageMenu({super.key});
@@ -26,32 +26,28 @@ class NotificationPageMenu extends StatefulWidget {
 class _NotificationPageMenuState extends State<NotificationPageMenu> {
   final List<Notifikasi> notifikasi = [
     Notifikasi(
-      pengirim: "Pak Budi",
+      namaKelas: "Matematika",
       pesan: "Tugas matematika baru telah ditambahkan untuk minggu ini",
       waktu: DateTime(2023, 10, 8, 23, 50),
-      isDeadline: true,
+      tipe: TipeNotifikasi.tugasBaru,
     ),
     Notifikasi(
-      pengirim: "Ibu Siti",
-      pesan: "Rapat penting untuk semua siswa kelas Bahasa Indonesia",
-      waktu: DateTime(2024, 8, 8, 19, 50),
-    ),
-    Notifikasi(
-      pengirim: "Pak Andi",
+      namaKelas: "IPA",
       pesan: "Batas waktu pengumpulan tugas IPA diperpanjang",
       waktu: DateTime(2024, 9, 27, 20, 10),
-      isDeadline: true,
+      tipe: TipeNotifikasi.deadlineTugas,
     ),
     Notifikasi(
-      pengirim: "Mr. John",
-      pesan: "Kelas Bahasa Inggris hari ini akan diadakan secara online",
-      waktu: DateTime(2024, 10, 5, 00, 42),
-    ),
-    Notifikasi(
-      pengirim: "Sistem",
-      pesan: "Nilai tugas Matematika telah diumumkan",
+      namaKelas: "Matematika",
+      pesan: "Tugas Matematika telah dinilai",
       waktu: DateTime(2024, 10, 6, 14, 30),
-      isNilai: true,
+      tipe: TipeNotifikasi.nilaiTugas,
+    ),
+    Notifikasi(
+      namaKelas: "Bahasa Indonesia",
+      pesan: "Deadline tugas Bahasa Indonesia diperpanjang hingga besok",
+      waktu: DateTime(2024, 10, 9, 18, 00),
+      tipe: TipeNotifikasi.deadlineTugas,
     ),
   ];
 
@@ -156,21 +152,13 @@ class _NotificationPageMenuState extends State<NotificationPageMenu> {
           final notif = notifikasi[index];
           return ListTile(
             leading: CircleAvatar(
-              backgroundColor: notif.isDeadline
-                  ? Colors.orange
-                  : notif.isNilai
-                      ? Colors.green
-                      : Theme.of(context).primaryColor,
+              backgroundColor: _getNotificationColor(notif.tipe),
               child: Icon(
-                notif.isDeadline
-                    ? Icons.timer
-                    : notif.isNilai
-                        ? Icons.grade
-                        : Icons.notifications,
+                _getNotificationIcon(notif.tipe),
                 color: Colors.white,
               ),
             ),
-            title: Text(notif.pengirim),
+            title: Text(notif.namaKelas),
             subtitle: Text(notif.pesan),
             trailing: Text(_formatWaktu(notif.waktu)),
             onTap: () {},
@@ -178,5 +166,31 @@ class _NotificationPageMenuState extends State<NotificationPageMenu> {
         },
       ),
     );
+  }
+
+  Color _getNotificationColor(TipeNotifikasi tipe) {
+    switch (tipe) {
+      case TipeNotifikasi.nilaiTugas:
+        return Colors.green;
+      case TipeNotifikasi.tugasBaru:
+        return Colors.blue;
+      case TipeNotifikasi.deadlineTugas:
+        return Colors.orange;
+      default:
+        return Theme.of(context).primaryColor;
+    }
+  }
+
+  IconData _getNotificationIcon(TipeNotifikasi tipe) {
+    switch (tipe) {
+      case TipeNotifikasi.nilaiTugas:
+        return Icons.grade;
+      case TipeNotifikasi.tugasBaru:
+        return Icons.assignment;
+      case TipeNotifikasi.deadlineTugas:
+        return Icons.timer;
+      default:
+        return Icons.notifications;
+    }
   }
 }
