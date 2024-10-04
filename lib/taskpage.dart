@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:tugasku_app/assignment.dart';
 
 class TaskPage extends StatefulWidget {
   const TaskPage({super.key});
@@ -81,7 +82,15 @@ class _TaskPageState extends State<TaskPage>
                 title: Text(task),
                 subtitle: Text('Deskripsi $task'),
                 trailing: Text(status),
-                onTap: () {},
+          
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => PengumpulanTugas(),
+                  ),
+                );
+              },
               );
             }),
           ],
