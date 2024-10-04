@@ -1,5 +1,3 @@
-// ignore_for_file: unnecessary_string_interpolations, prefer_const_constructors
-
 import 'package:flutter/material.dart';
 
 class Notifikasi {
@@ -18,14 +16,14 @@ class Notifikasi {
   });
 }
 
-class ActivityPageMenu extends StatefulWidget {
-  const ActivityPageMenu({super.key});
+class NotificationPageMenu extends StatefulWidget {
+  const NotificationPageMenu({super.key});
 
   @override
-  State<ActivityPageMenu> createState() => _ActivityPageMenuState();
+  State<NotificationPageMenu> createState() => _NotificationPageMenuState();
 }
 
-class _ActivityPageMenuState extends State<ActivityPageMenu> {
+class _NotificationPageMenuState extends State<NotificationPageMenu> {
   final List<Notifikasi> notifikasi = [
     Notifikasi(
       pengirim: "Pak Budi",
@@ -93,7 +91,7 @@ class _ActivityPageMenuState extends State<ActivityPageMenu> {
     } else if (selisih.inDays == 1) {
       return 'Kemarin';
     } else if (selisih.inDays < 7) {
-      return '${_getNamaHari(waktu)}';
+      return _getNamaHari(waktu);
     } else if (sekarang.year == waktu.year) {
       return '${waktu.day} ${_getNamaBulan(waktu.month)}';
     } else {
@@ -141,16 +139,12 @@ class _ActivityPageMenuState extends State<ActivityPageMenu> {
         elevation: 0,
         title: ElevatedButton(
           onPressed: _toggleSortOrder,
-          style: ElevatedButton.styleFrom(
-            foregroundColor: Theme.of(context).iconTheme.color,
-            backgroundColor: Colors.transparent,
-            elevation: 0,
-          ),
+          style: ElevatedButton.styleFrom(),
           child: Row(
             mainAxisSize: MainAxisSize.min,
             children: [
               Icon(_isAscending ? Icons.arrow_upward : Icons.arrow_downward),
-              SizedBox(width: 8),
+              const SizedBox(width: 8),
               Text(_isAscending ? "Terlama" : "Terbaru"),
             ],
           ),

@@ -24,7 +24,7 @@ class _ClassPageMenuState extends State<ClassPageMenu> {
         itemCount: _classes.length,
         itemBuilder: (context, index) {
           return Card(
-            margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+            margin: const EdgeInsets.symmetric(horizontal: 15, vertical: 5),
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(11),
             ),
