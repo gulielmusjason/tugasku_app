@@ -1,63 +1,27 @@
 import 'package:flutter/material.dart';
 
+import 'mission.dart';
+import 'pengumpulantugas.dart';
+
 class ClassPage extends StatefulWidget {
   final String className;
-  const ClassPage({super.key, required this.className});
+  const ClassPage({Key? key, required this.className}) : super(key: key);
 
   @override
   State<ClassPage> createState() => _ClassPageState();
 }
 
-class _ClassPageState extends State<ClassPage>
-    with SingleTickerProviderStateMixin {
+class _ClassPageState extends State<ClassPage> with SingleTickerProviderStateMixin {
   late TabController _tabController;
 
   final List<Map<String, dynamic>> _tasks = [
-    {
-      'name': 'Tugas Matematika',
-      'class': 'Matematika',
-      'dueDate': DateTime(2024, 11, 3, 23, 59),
-    },
-    {
-      'name': 'Tugas Bahasa Indonesia',
-      'class': 'Bahasa Indonesia',
-      'dueDate': DateTime(2024, 10, 15, 23, 59),
-    },
-    {
-      'name': 'Tugas IPA',
-      'class': 'IPA',
-      'dueDate': DateTime(2023, 10, 7, 23, 59),
-    },
-    {
-      'name': 'Tugas IPS',
-      'class': 'IPS',
-      'dueDate': DateTime(2024, 10, 7, 23, 00),
-    },
-    {
-      'name': 'Tugas Bahasa Inggris',
-      'class': 'Bahasa Inggris',
-      'dueDate': DateTime(2024, 10, 8, 23, 55),
-    },
-    {
-      'name': 'Tugas Bahasa',
-      'class': 'Bahasa Inggris',
-      'dueDate': DateTime(2024, 10, 8, 23, 50),
-    },
+    {'name': 'Tugas 1', 'class': 'Matematika', 'dueDate': DateTime.now().add(Duration(days: 7))},
+    {'name': 'Tugas 2', 'class': 'Bahasa Indonesia', 'dueDate': DateTime.now().add(Duration(days: 5))},
   ];
 
   final List<Map<String, String>> _members = [
-    {'name': 'Ani Wijaya', 'role': 'Siswa', 'class': 'Bahasa Indonesia'},
-    {'name': 'Indah Permata', 'role': 'Siswa', 'class': 'Bahasa Indonesia'},
-    {'name': 'Fajar Ramadhan', 'role': 'Siswa', 'class': 'Bahasa Inggris'},
-    {'name': 'Kartika Sari', 'role': 'Siswa', 'class': 'Bahasa Inggris'},
-    {'name': 'Citra Purnama', 'role': 'Siswa', 'class': 'IPA'},
-    {'name': 'Hadi Prasetyo', 'role': 'Siswa', 'class': 'IPA'},
-    {'name': 'Eka Putri', 'role': 'Siswa', 'class': 'IPS'},
-    {'name': 'Joko Widodo', 'role': 'Siswa', 'class': 'IPS'},
-    {'name': 'Budi Santoso', 'role': 'Siswa', 'class': 'Matematika'},
-    {'name': 'Dedi Kurniawan', 'role': 'Siswa', 'class': 'Matematika'},
-    {'name': 'Gita Nirmala', 'role': 'Siswa', 'class': 'Matematika'},
-    {'name': 'Luhut Pandjaitan', 'role': 'Siswa', 'class': 'Matematika'},
+    {'name': 'Andi', 'role': 'Siswa', 'class': 'Matematika'},
+    {'name': 'Budi', 'role': 'Siswa', 'class': 'Bahasa Indonesia'},
   ];
 
   @override
@@ -70,6 +34,22 @@ class _ClassPageState extends State<ClassPage>
   void dispose() {
     _tabController.dispose();
     super.dispose();
+  }
+
+  void _addNewTask() {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => MissionPage(
+          className: widget.className,
+          onNewTask: (newTask) {
+            setState(() {
+              _tasks.add(newTask);
+            });
+          },
+        ),
+      ),
+    );
   }
 
   @override
@@ -99,7 +79,7 @@ class _ClassPageState extends State<ClassPage>
     final filteredTasks = _tasks
         .where((task) => task['class'] == widget.className)
         .toList()
-      ..sort((a, b) => a['dueDate'].compareTo(b['dueDate']));
+      ..sort((a, b) => (a['dueDate'] as DateTime).compareTo(b['dueDate'] as DateTime));
 
     return Stack(
       children: [
@@ -108,16 +88,13 @@ class _ClassPageState extends State<ClassPage>
           itemBuilder: (context, index) {
             final task = filteredTasks[index];
             return Card(
-              margin:
-                  const EdgeInsets.symmetric(vertical: 4.0, horizontal: 15.0),
-              shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(11)),
+              margin: const EdgeInsets.symmetric(vertical: 4.0, horizontal: 15.0),
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(11)),
               child: ListTile(
-                title: Text(task['name']),
-                subtitle:
-                    Text('Jatuh tempo: ${_formatDateTime(task['dueDate'])}'),
+                title: Text(task['name'] as String),
+                subtitle: Text('Jatuh tempo: ${_formatDateTime(task['dueDate'] as DateTime)}'),
                 trailing: const Icon(Icons.arrow_forward_ios, size: 15),
-                onTap: () {},
+                onTap: () => _navigateToPengumpulanTugas(task),
               ),
             );
           },
@@ -126,7 +103,7 @@ class _ClassPageState extends State<ClassPage>
           right: 16,
           bottom: 16,
           child: FloatingActionButton(
-            onPressed: () {},
+            onPressed: _addNewTask,
             child: const Icon(Icons.add),
           ),
         ),
@@ -139,57 +116,41 @@ class _ClassPageState extends State<ClassPage>
         .where((member) => member['class'] == widget.className)
         .toList();
 
-    return Stack(
-      children: [
-        ListView.builder(
-          itemCount: filteredMembers.length,
-          itemBuilder: (context, index) {
-            final member = filteredMembers[index];
-            return ListTile(
-              leading: CircleAvatar(child: Text(member['name']![0])),
-              title: Text(member['name']!),
-              subtitle: Text(member['role']!),
-              onTap: () {},
-            );
-          },
-        ),
-        Positioned(
-          right: 16,
-          bottom: 16,
-          child: FloatingActionButton(
-            onPressed: () {},
-            child: const Icon(Icons.add),
-          ),
-        ),
-      ],
+    return ListView.builder(
+      itemCount: filteredMembers.length,
+      itemBuilder: (context, index) {
+        final member = filteredMembers[index];
+        return ListTile(
+          leading: CircleAvatar(child: Text(member['name']![0])),
+          title: Text(member['name']!),
+          subtitle: Text(member['role']!),
+          onTap: () {},
+        );
+      },
     );
   }
 
   String _formatDateTime(DateTime date) {
-    const monthNames = [
-      'Jan',
-      'Feb',
-      'Mar',
-      'Apr',
-      'Mei',
-      'Jun',
-      'Jul',
-      'Agu',
-      'Sep',
-      'Okt',
-      'Nov',
-      'Des'
-    ];
-    const dayNames = [
-      'Senin',
-      'Selasa',
-      'Rabu',
-      'Kamis',
-      'Jumat',
-      'Sabtu',
-      'Minggu'
-    ];
-    return '${date.day} ${monthNames[date.month - 1]} ${date.year} ${dayNames[date.weekday - 1]} '
-        '${date.hour.toString().padLeft(2, '0')}:${date.minute.toString().padLeft(2, '0')}';
+    return "${date.day}/${date.month}/${date.year}";
+  }
+
+  void _navigateToPengumpulanTugas(Map<String, dynamic> task) async {
+    final result = await Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => PengumpulanTugas(
+          className: task['class'] as String,
+          taskName: task['name'] as String,
+        ),
+      ),
+    );
+
+    if (result == true) {
+      // Tugas telah dikumpulkan, perbarui status tugas
+      setState(() {
+        task['isSubmitted'] = true;
+        task['submittedDate'] = DateTime.now();
+      });
+    }
   }
 }
