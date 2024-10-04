@@ -1,18 +1,19 @@
 import 'package:flutter/material.dart';
 
-import 'notifpagemenu.dart';
-
 export 'mission.dart';
 
 class MissionPage extends StatefulWidget {
-  final String className;
-  final Function(Notifikasi) onNewNotification;
+  final String? className;
+  final List<String>? classes;
+  final Function(Map<String, dynamic>) onNewTask;
 
   const MissionPage({
-    Key? key, 
-    required this.className,
-    required this.onNewNotification,
-  }) : super(key: key);
+    Key? key,
+    this.className,
+    this.classes,
+    required this.onNewTask,
+  }) : assert(className != null || classes != null),
+       super(key: key);
 
   @override
   _MissionPageState createState() => _MissionPageState();
@@ -22,6 +23,13 @@ class _MissionPageState extends State<MissionPage> {
   final _formKey = GlobalKey<FormState>();
   final _taskNameController = TextEditingController();
   DateTime _dueDate = DateTime.now().add(Duration(days: 7));
+  String? _selectedClass;
+
+  @override
+  void initState() {
+    super.initState();
+    _selectedClass = widget.className ?? widget.classes?.first;
+  }
 
   @override
   void dispose() {
@@ -31,26 +39,14 @@ class _MissionPageState extends State<MissionPage> {
 
   void _submitTask() {
     if (_formKey.currentState!.validate()) {
-      // Simpan tugas baru
       final newTask = {
         'name': _taskNameController.text,
-        'class': widget.className,
+        'class': _selectedClass!,
         'dueDate': _dueDate,
       };
 
-      // Buat notifikasi baru
-      final newNotification = Notifikasi(
-        pengirim: "Sistem",
-        pesan: "Tugas baru '${newTask['name']}' telah ditambahkan untuk kelas ${newTask['class']}",
-        waktu: DateTime.now(),
-        isDeadline: true,
-      );
-
-      // Kirim notifikasi baru
-      widget.onNewNotification(newNotification);
-
-      // Kembali ke ClassPage dengan tugas baru
-      Navigator.pop(context, newTask);
+      widget.onNewTask(newTask);
+      Navigator.pop(context);
     }
   }
 
@@ -58,7 +54,7 @@ class _MissionPageState extends State<MissionPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Tambah Tugas - ${widget.className}'),
+        title: Text('Tambah Tugas${widget.className != null ? ' - ${widget.className}' : ''}'),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -67,6 +63,23 @@ class _MissionPageState extends State<MissionPage> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
+              if (widget.classes != null)
+                DropdownButtonFormField<String>(
+                  value: _selectedClass,
+                  items: widget.classes!.map((String value) {
+                    return DropdownMenuItem<String>(
+                      value: value,
+                      child: Text(value),
+                    );
+                  }).toList(),
+                  onChanged: (String? newValue) {
+                    setState(() {
+                      _selectedClass = newValue;
+                    });
+                  },
+                  decoration: InputDecoration(labelText: 'Pilih Kelas'),
+                ),
+              SizedBox(height: 20), // Tambahkan padding di sini
               TextFormField(
                 controller: _taskNameController,
                 decoration: InputDecoration(labelText: 'Nama Tugas'),

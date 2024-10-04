@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
-import 'package:tugasku_app/classpage.dart';
+
+import 'classpage.dart';
+import 'mission.dart';
 
 class ClassPageMenu extends StatefulWidget {
   const ClassPageMenu({super.key});
 
   @override
-  State<ClassPageMenu> createState() => _ClassPageMenuState();
+  _ClassPageMenuState createState() => _ClassPageMenuState();
 }
 
 class _ClassPageMenuState extends State<ClassPageMenu> {
@@ -17,6 +19,21 @@ class _ClassPageMenuState extends State<ClassPageMenu> {
     {'name': 'Bahasa Inggris', 'teacher': 'Mr. John', 'icon': Icons.language},
   ];
 
+  void _addNewTask() {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => MissionPage(
+          classes: _classes.map((c) => c['name'] as String).toList(),
+          onNewTask: (newTask) {
+            // Implementasi penambahan tugas baru
+            // Anda mungkin perlu meneruskan ini ke ClassPage yang sesuai
+          },
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -25,15 +42,14 @@ class _ClassPageMenuState extends State<ClassPageMenu> {
         itemBuilder: (context, index) {
           return Card(
             margin: const EdgeInsets.symmetric(horizontal: 15, vertical: 5),
-            shape:
-                RoundedRectangleBorder(borderRadius: BorderRadius.circular(11)),
+            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(11)),
             child: InkWell(
               borderRadius: BorderRadius.circular(11),
               onTap: () => Navigator.push(
                 context,
                 MaterialPageRoute(
-                    builder: (context) =>
-                        ClassPage(className: _classes[index]['name'])),
+                  builder: (context) => ClassPage(className: _classes[index]['name']),
+                ),
               ),
               child: ListTile(
                 leading: Icon(_classes[index]['icon'],
@@ -47,7 +63,7 @@ class _ClassPageMenuState extends State<ClassPageMenu> {
         },
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: () {},
+        onPressed: _addNewTask,
         child: const Icon(Icons.add),
       ),
     );
