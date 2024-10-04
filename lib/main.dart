@@ -42,6 +42,7 @@ class _MyAppState extends State<MyApp> {
               textTheme: const TextTheme(
                 titleLarge: TextStyle(color: Colors.brown),
                 bodyMedium: TextStyle(color: Colors.black87),
+                bodySmall: TextStyle(color: Colors.black87),
               ),
               inputDecorationTheme: InputDecorationTheme(
                 fillColor: Colors.grey.shade200,
@@ -74,6 +75,7 @@ class _MyAppState extends State<MyApp> {
               textTheme: const TextTheme(
                 titleLarge: TextStyle(color: Colors.white),
                 bodyMedium: TextStyle(color: Colors.white70),
+                bodySmall: TextStyle(color: Colors.white70),
               ),
               inputDecorationTheme: InputDecorationTheme(
                 fillColor: Colors.grey.shade800,

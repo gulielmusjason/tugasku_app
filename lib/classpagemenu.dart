@@ -27,10 +27,13 @@ class _ClassPageMenuState extends State<ClassPageMenu> {
             margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
             child: ListTile(
               leading: Icon(_classes[index]['icon'],
-                  color: Theme.of(context).primaryColor),
+                  color: Theme.of(context).primaryColor, size: 30),
               title: Text(_classes[index]['name']),
               subtitle: Text(_classes[index]['teacher']),
-              trailing: const Icon(Icons.arrow_forward_ios),
+              trailing: const Icon(
+                Icons.arrow_forward_ios,
+                size: 15,
+              ),
               onTap: () {
                 Navigator.push(
                   context,

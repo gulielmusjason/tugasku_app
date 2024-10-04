@@ -9,14 +9,14 @@ class Notification {
       {required this.sender, required this.message, required this.time});
 }
 
-class ActivityPage extends StatefulWidget {
-  const ActivityPage({super.key});
+class ActivityPageMenu extends StatefulWidget {
+  const ActivityPageMenu({super.key});
 
   @override
-  State<ActivityPage> createState() => _ActivityPageState();
+  State<ActivityPageMenu> createState() => _ActivityPageMenuState();
 }
 
-class _ActivityPageState extends State<ActivityPage> {
+class _ActivityPageMenuState extends State<ActivityPageMenu> {
   final List<Notification> notifications = [
     Notification(
         sender: "VALERIE",
@@ -37,9 +37,6 @@ class _ActivityPageState extends State<ActivityPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Aktivitas'),
-      ),
       body: ListView.builder(
         itemCount: notifications.length,
         itemBuilder: (context, index) {
