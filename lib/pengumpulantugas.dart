@@ -102,8 +102,8 @@ class _PengumpulanTugasState extends State<PengumpulanTugas> {
               style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 10),
-            Text('Judul Tugas: $judulTugas'),
-            Text('Tenggat Waktu: $tenggatWaktu'),
+            Text(judulTugas),
+            Text('Jatuh Tempo: $tenggatWaktu'),
             const SizedBox(height: 16),
             ElevatedButton.icon(
               onPressed: _pilihFile,
