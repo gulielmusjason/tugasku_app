@@ -25,29 +25,22 @@ class _ClassPageMenuState extends State<ClassPageMenu> {
         itemBuilder: (context, index) {
           return Card(
             margin: const EdgeInsets.symmetric(horizontal: 15, vertical: 5),
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(11),
-            ),
+            shape:
+                RoundedRectangleBorder(borderRadius: BorderRadius.circular(11)),
             child: InkWell(
               borderRadius: BorderRadius.circular(11),
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
+              onTap: () => Navigator.push(
+                context,
+                MaterialPageRoute(
                     builder: (context) =>
-                        ClassPage(className: _classes[index]['name']),
-                  ),
-                );
-              },
+                        ClassPage(className: _classes[index]['name'])),
+              ),
               child: ListTile(
                 leading: Icon(_classes[index]['icon'],
                     color: Theme.of(context).primaryColor, size: 30),
                 title: Text(_classes[index]['name']),
                 subtitle: Text(_classes[index]['teacher']),
-                trailing: const Icon(
-                  Icons.arrow_forward_ios,
-                  size: 15,
-                ),
+                trailing: const Icon(Icons.arrow_forward_ios, size: 15),
               ),
             ),
           );

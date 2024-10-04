@@ -16,31 +16,35 @@ class SettingPage extends StatelessWidget {
         children: [
           ListTile(
             title: const Text('Tema'),
-            trailing: DropdownButton<ThemeMode>(
-              value: themeNotifier.value,
-              onChanged: (ThemeMode? newThemeMode) {
-                if (newThemeMode != null) {
-                  themeNotifier.setThemeMode(newThemeMode);
-                }
-              },
-              items: const [
-                DropdownMenuItem(
-                  value: ThemeMode.system,
-                  child: Text('Sistem'),
-                ),
-                DropdownMenuItem(
-                  value: ThemeMode.light,
-                  child: Text('Terang'),
-                ),
-                DropdownMenuItem(
-                  value: ThemeMode.dark,
-                  child: Text('Gelap'),
-                ),
-              ],
-            ),
+            trailing: _buildThemeDropdown(themeNotifier),
           ),
         ],
       ),
+    );
+  }
+
+  Widget _buildThemeDropdown(ThemeNotifier? themeNotifier) {
+    return DropdownButton<ThemeMode>(
+      value: themeNotifier?.value,
+      onChanged: (ThemeMode? newThemeMode) {
+        if (newThemeMode != null) {
+          themeNotifier?.setThemeMode(newThemeMode);
+        }
+      },
+      items: const [
+        DropdownMenuItem(
+          value: ThemeMode.system,
+          child: Text('Sistem'),
+        ),
+        DropdownMenuItem(
+          value: ThemeMode.light,
+          child: Text('Terang'),
+        ),
+        DropdownMenuItem(
+          value: ThemeMode.dark,
+          child: Text('Gelap'),
+        ),
+      ],
     );
   }
 }

@@ -144,7 +144,7 @@ class _NotificationPageMenuState extends State<NotificationPageMenu> {
               mainAxisSize: MainAxisSize.min,
               children: [
                 Icon(_isAscending ? Icons.arrow_upward : Icons.arrow_downward),
-                SizedBox(width: 8),
+                const SizedBox(width: 8),
                 Text(_isAscending ? "Terlama" : "Terbaru"),
               ],
             ),

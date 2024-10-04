@@ -161,6 +161,6 @@ class _PengumpulanTugasState extends State<PengumpulanTugas> {
       'Nov',
       'Des'
     ];
-    return monthNames[month];
+    return monthNames[month - 1];
   }
 }
