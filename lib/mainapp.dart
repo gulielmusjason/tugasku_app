@@ -3,7 +3,7 @@ import 'package:tugasku_app/activitypagemenu.dart';
 import 'package:tugasku_app/classpagemenu.dart';
 import 'package:tugasku_app/settingpage.dart';
 import 'package:tugasku_app/signinpage.dart';
-import 'package:tugasku_app/taskpagemenu.dart';
+import 'package:tugasku_app/taskpage.dart';
 
 class MainApp extends StatefulWidget {
   final Function(ThemeMode) changeTheme;
