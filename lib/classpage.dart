@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:tugasku_app/evaluation.dart';
 
 class ClassPage extends StatefulWidget {
   final String className;
@@ -117,7 +118,18 @@ class _ClassPageState extends State<ClassPage>
                 subtitle:
                     Text('Jatuh tempo: ${_formatDateTime(task['dueDate'])}'),
                 trailing: const Icon(Icons.arrow_forward_ios, size: 15),
-                onTap: () {},
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => EvaluationPage(
+                        taskName: task['name'],
+                        studentName: 'Nama Siswa', // Anda perlu menentukan cara memilih siswa
+                        className: widget.className,
+                      ),
+                    ),
+                  );
+                },
               ),
             );
           },
