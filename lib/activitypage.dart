@@ -18,11 +18,13 @@ class ActivityPage extends StatefulWidget {
 class _ActivityPageState extends State<ActivityPage> {
   // Daftar notifikasi sementara
   final List<Notification> notifications = [
-    Notification(sender: "VALEROY", message: "Selamat sore semua, kalo ada pertanyaan...", time: "14.54"),
-    Notification(sender: "DEBBY", message: "Menyebutkan Grup Mahasiswa SI 2022", time: "10.46"),
-    Notification(sender: "Dr. Dedi Trisnawarman", message: "Updated an assignment", time: "Yesterday"),
-    Notification(sender: "hendra", message: "Scheduled a meeting", time: "Monday"),
+    Notification(sender: "ERY DEWAYANI", message: "Guru Matematika", time: "Add Tugas"),
+    Notification(sender: "DEDI TRISNAWARMAN", message: "Guru Sejarah", time: "Add Tugas"),
+    Notification(sender: "TONY LIE", message: "Guru Kimia", time: "Add Tugas"),
+    Notification(sender: "WASINO", message: "Guru Seni", time: "Add Tugas"),
+    Notification(sender: "DEBBY", message: "Guru Bahasa Inggris", time: "Add Tugas"),
   ];
+
 
   @override
   Widget build(BuildContext context) {
