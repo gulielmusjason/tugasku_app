@@ -8,11 +8,11 @@ class EvaluationPage extends StatefulWidget {
   final String className;
 
   const EvaluationPage({
-    super.key,
+    Key? key,
     required this.taskName,
     required this.studentName,
     required this.className,
-  });
+  }) : super(key: key);
 
   @override
   // ignore: library_private_types_in_public_api
@@ -100,7 +100,7 @@ class _EvaluationPageState extends State<EvaluationPage> {
             TextField(
               controller: _feedbackController,
               decoration: InputDecoration(
-                labelText: 'Umpan Balik',
+                labelText: 'Berikan Tanggapan',
                 border: OutlineInputBorder(),
               ),
               maxLines: 5,

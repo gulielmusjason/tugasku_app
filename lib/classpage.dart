@@ -49,10 +49,13 @@ class _ClassPageState extends State<ClassPage>
   final List<Map<String, String>> _members = [
     {'name': 'Ani Wijaya', 'role': 'Siswa', 'class': 'Bahasa Indonesia'},
     {'name': 'Indah Permata', 'role': 'Siswa', 'class': 'Bahasa Indonesia'},
+    {'name': 'Gibran Rakabuming', 'role': 'Siswa', 'class': 'Bahasa Indonesia'},
     {'name': 'Fajar Ramadhan', 'role': 'Siswa', 'class': 'Bahasa Inggris'},
     {'name': 'Kartika Sari', 'role': 'Siswa', 'class': 'Bahasa Inggris'},
+    {'name': 'Kaesang Pangarep', 'role': 'Siswa', 'class': 'Bahasa Inggris'},
     {'name': 'Citra Purnama', 'role': 'Siswa', 'class': 'IPA'},
     {'name': 'Hadi Prasetyo', 'role': 'Siswa', 'class': 'IPA'},
+    {'name': 'Megawati Soekarno putri', 'role': 'Siswa', 'class': 'IPA'},
     {'name': 'Eka Putri', 'role': 'Siswa', 'class': 'IPS'},
     {'name': 'Joko Widodo', 'role': 'Siswa', 'class': 'IPS'},
     {'name': 'Budi Santoso', 'role': 'Siswa', 'class': 'Matematika'},
@@ -118,18 +121,7 @@ class _ClassPageState extends State<ClassPage>
                 subtitle:
                     Text('Jatuh tempo: ${_formatDateTime(task['dueDate'])}'),
                 trailing: const Icon(Icons.arrow_forward_ios, size: 15),
-                onTap: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => EvaluationPage(
-                        taskName: task['name'],
-                        studentName: 'Nama Siswa', // Anda perlu menentukan cara memilih siswa
-                        className: widget.className,
-                      ),
-                    ),
-                  );
-                },
+                onTap: () => _showStudentSelectionDialog(task),
               ),
             );
           },
@@ -203,5 +195,46 @@ class _ClassPageState extends State<ClassPage>
     ];
     return '${date.day} ${monthNames[date.month - 1]} ${date.year} ${dayNames[date.weekday - 1]} '
         '${date.hour.toString().padLeft(2, '0')}:${date.minute.toString().padLeft(2, '0')}';
+  }
+
+  void _showStudentSelectionDialog(Map<String, dynamic> task) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('Pilih Siswa'),
+          content: Container(
+            width: double.maxFinite,
+            child: ListView.builder(
+              shrinkWrap: true,
+              itemCount: _members.length,
+              itemBuilder: (BuildContext context, int index) {
+                final student = _members[index];
+                final bool isInClass = student['class'] == widget.className;
+                return ListTile(
+                  title: Text(student['name']!),
+                  subtitle: Text(student['class']!),
+                  enabled: isInClass,
+                  onTap: isInClass ? () {
+                    Navigator.of(context).pop();
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => EvaluationPage(
+                          taskName: task['name'],
+                          studentName: student['name']!,
+                          className: widget.className,
+                        ),
+                      ),
+                    );
+                  } : null,
+                  textColor: isInClass ? null : Colors.grey,
+                );
+              },
+            ),
+          ),
+        );
+      },
+    );
   }
 }
