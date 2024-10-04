@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:tugasku_app/evaluation.dart';
+
+import 'evaluation.dart';
+import 'mission.dart';
 
 class ClassPage extends StatefulWidget {
   final String className;
@@ -130,7 +132,19 @@ class _ClassPageState extends State<ClassPage>
           right: 16,
           bottom: 16,
           child: FloatingActionButton(
-            onPressed: () {},
+            onPressed: () async {
+              final result = await Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => MissionPage(className: widget.className, onNewNotification: (Notifikasi ) {  },),
+                ),
+              );
+              if (result != null) {
+                setState(() {
+                  _tasks.add(result);
+                });
+              }
+            },
             child: const Icon(Icons.add),
           ),
         ),

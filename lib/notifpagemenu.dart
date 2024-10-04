@@ -130,6 +130,13 @@ class _NotificationPageMenuState extends State<NotificationPageMenu> {
     return namaBulan[bulan - 1];
   }
 
+  void addNewNotification(Notifikasi newNotification) {
+    setState(() {
+      notifikasi.insert(0, newNotification);
+      _sortNotifikasi();
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
