@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:tugasku_app/activitypagemenu.dart';
+import 'package:tugasku_app/notificationpagemenu.dart';
 import 'package:tugasku_app/classpagemenu.dart';
 import 'package:tugasku_app/settingpage.dart';
 import 'package:tugasku_app/signinpage.dart';
@@ -25,13 +25,13 @@ class _MainAppState extends State<MainApp> {
   static final List<Widget> _widgetOptions = <Widget>[
     const ClassPageMenu(),
     const TaskPageMenu(),
-    const ActivityPageMenu(),
+    const NotificationPageMenu(),
   ];
 
   static final List<String> _appBarTitles = [
     'Kelas',
     'Tugas',
-    'Aktivitas',
+    'Notifikasi',
   ];
 
   void _onItemTapped(int index) {
@@ -121,7 +121,7 @@ class _MainAppState extends State<MainApp> {
             BottomNavigationBarItem(icon: Icon(Icons.class_), label: "Kelas"),
             BottomNavigationBarItem(icon: Icon(Icons.task), label: "Tugas"),
             BottomNavigationBarItem(
-                icon: Icon(Icons.notifications), label: "Aktivitas")
+                icon: Icon(Icons.notifications), label: "Notifikasi")
           ],
           currentIndex: _selectIndex,
           onTap: _onItemTapped,
