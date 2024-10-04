@@ -84,21 +84,14 @@ class _ActivityPageMenuState extends State<ActivityPageMenu> {
     final sekarang = DateTime.now();
     final selisih = sekarang.difference(waktu);
 
-    if (selisih.inMinutes < 1) {
-      return 'Baru saja';
-    } else if (selisih.inMinutes < 60) {
-      return '${selisih.inMinutes} menit yang lalu';
-    } else if (selisih.inHours < 24) {
-      return '${selisih.inHours} jam yang lalu';
-    } else if (selisih.inDays == 1) {
-      return 'Kemarin';
-    } else if (selisih.inDays < 7) {
-      return '${_getNamaHari(waktu)}';
-    } else if (sekarang.year == waktu.year) {
+    if (selisih.inMinutes < 1) return 'Baru saja';
+    if (selisih.inMinutes < 60) return '${selisih.inMinutes} menit yang lalu';
+    if (selisih.inHours < 24) return '${selisih.inHours} jam yang lalu';
+    if (selisih.inDays == 1) return 'Kemarin';
+    if (selisih.inDays < 7) return _getNamaHari(waktu);
+    if (sekarang.year == waktu.year)
       return '${waktu.day} ${_getNamaBulan(waktu.month)}';
-    } else {
-      return '${waktu.day} ${_getNamaBulan(waktu.month)} ${waktu.year}';
-    }
+    return '${waktu.day} ${_getNamaBulan(waktu.month)} ${waktu.year}';
   }
 
   String _getNamaHari(DateTime tanggal) {

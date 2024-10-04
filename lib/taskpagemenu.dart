@@ -27,14 +27,7 @@ class _TaskPageMenuState extends State<TaskPageMenu>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: TabBar(
-        controller: _tabController,
-        tabs: const [
-          Tab(child: Text('Mendatang', textAlign: TextAlign.center)),
-          Tab(child: Text('Lewat Jatuh Tempo', textAlign: TextAlign.center)),
-          Tab(child: Text('Selesai', textAlign: TextAlign.center)),
-        ],
-      ),
+      appBar: _buildAppBar(),
       body: TabBarView(
         controller: _tabController,
         children: [
@@ -46,8 +39,154 @@ class _TaskPageMenuState extends State<TaskPageMenu>
     );
   }
 
+  PreferredSize _buildAppBar() {
+    return PreferredSize(
+      preferredSize: const Size.fromHeight(kToolbarHeight),
+      child: SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 8.0),
+          child: Row(
+            children: [
+              Expanded(child: _buildTabButton('Mendatang', 0)),
+              const SizedBox(width: 8),
+              Expanded(child: _buildTabButton('Lewat Jatuh Tempo', 1)),
+              const SizedBox(width: 8),
+              Expanded(child: _buildTabButton('Selesai', 2)),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildTabButton(String text, int index) {
+    return SizedBox(
+      height: 40,
+      child: ElevatedButton(
+        style: ElevatedButton.styleFrom(
+          backgroundColor: _tabController.index == index
+              ? Theme.of(context).primaryColorDark
+              : Theme.of(context).primaryColor,
+          foregroundColor: Colors.white,
+          elevation: 0,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(20),
+          ),
+          padding: const EdgeInsets.all(5),
+        ),
+        onPressed: () {
+          _tabController.animateTo(index);
+          setState(() {});
+        },
+        child: Text(
+          text,
+          textAlign: TextAlign.center,
+          style: const TextStyle(fontSize: 12),
+        ),
+      ),
+    );
+  }
+
   Widget _buildTaskList(String status) {
-    final List<Map<String, dynamic>> tasks = [
+    final List<Map<String, dynamic>> tasks = _getTasks();
+    tasks.sort((a, b) => a['dueDate'].compareTo(b['dueDate']));
+
+    final groupedTasks = _groupTasksByDate(tasks);
+    final sortedDates = groupedTasks.keys.toList()..sort();
+
+    return ListView.builder(
+      itemCount: sortedDates.length,
+      itemBuilder: (context, index) {
+        final date = sortedDates[index];
+        final tasksForDate = groupedTasks[date]!;
+
+        final filteredTasks = tasksForDate
+            .where((task) =>
+                _getTaskStatusTab(task['dueDate'], task['isSubmitted']) ==
+                status)
+            .toList();
+
+        if (filteredTasks.isEmpty) {
+          return const SizedBox.shrink();
+        }
+
+        return _buildTaskGroup(date, filteredTasks);
+      },
+    );
+  }
+
+  Widget _buildTaskGroup(DateTime date, List<Map<String, dynamic>> tasks) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 15.0, vertical: 10.0),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            '${date.day} ${_getMonthName(date.month)} ${_getDayName(date)}',
+            style: const TextStyle(fontWeight: FontWeight.bold),
+          ),
+          ...tasks.map((task) => _buildTaskCard(task)),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildTaskCard(Map<String, dynamic> task) {
+    final taskStatus = _getTaskStatus(
+        task['dueDate'], task['isSubmitted'], task['submittedDate']);
+    final isLateOrOverdue =
+        taskStatus == 'Lewat Jatuh Tempo' || taskStatus == 'Telat';
+
+    return Card(
+      margin: const EdgeInsets.symmetric(vertical: 4.0),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(11),
+      ),
+      child: InkWell(
+        borderRadius: BorderRadius.circular(11),
+        onTap: () => _navigateToPengumpulanTugas(task),
+        child: ListTile(
+          title: Text(task['name']),
+          subtitle: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                '${task['class']}',
+                style: Theme.of(context).textTheme.bodyMedium,
+              ),
+              Text(
+                'Jatuh tempo: ${_formatDateTime(task['dueDate'])}',
+                style: Theme.of(context).textTheme.bodySmall,
+              ),
+              if (task['isSubmitted'] && task['submittedDate'] != null)
+                Text(
+                  'Disubmit pada: ${_formatDateTime(task['submittedDate'])}',
+                  style: Theme.of(context).textTheme.bodySmall,
+                ),
+              Text(
+                taskStatus,
+                style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                      color: isLateOrOverdue ? Colors.red : null,
+                    ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  void _navigateToPengumpulanTugas(Map<String, dynamic> task) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => PengumpulanTugas(task: task),
+      ),
+    );
+  }
+
+  List<Map<String, dynamic>> _getTasks() {
+    return [
       {
         'name': 'Tugas Matematika',
         'class': 'Matematika',
@@ -91,9 +230,10 @@ class _TaskPageMenuState extends State<TaskPageMenu>
         'submittedDate': DateTime(2024, 10, 8, 23, 56)
       },
     ];
+  }
 
-    tasks.sort((a, b) => a['dueDate'].compareTo(b['dueDate']));
-
+  Map<DateTime, List<Map<String, dynamic>>> _groupTasksByDate(
+      List<Map<String, dynamic>> tasks) {
     final groupedTasks = <DateTime, List<Map<String, dynamic>>>{};
     for (var task in tasks) {
       final dueDate = DateTime(
@@ -103,93 +243,7 @@ class _TaskPageMenuState extends State<TaskPageMenu>
       }
       groupedTasks[dueDate]!.add(task);
     }
-
-    final sortedDates = groupedTasks.keys.toList()..sort();
-
-    return ListView.builder(
-      itemCount: sortedDates.length,
-      itemBuilder: (context, index) {
-        final date = sortedDates[index];
-        final tasksForDate = groupedTasks[date]!;
-
-        final filteredTasks = tasksForDate
-            .where((task) =>
-                _getTaskStatusTab(task['dueDate'], task['isSubmitted']) ==
-                status)
-            .toList();
-
-        if (filteredTasks.isEmpty) {
-          return const SizedBox.shrink();
-        }
-
-        return Container(
-          padding: const EdgeInsets.symmetric(horizontal: 15.0, vertical: 10.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                '${date.day} ${_getMonthName(date.month)} ${_getDayName(date)}',
-                style: const TextStyle(fontWeight: FontWeight.bold),
-              ),
-              ...filteredTasks.map((task) {
-                final taskStatus = _getTaskStatus(task['dueDate'],
-                    task['isSubmitted'], task['submittedDate']);
-                final isLateOrOverdue =
-                    taskStatus == 'Lewat Jatuh Tempo' || taskStatus == 'Telat';
-                return Card(
-                  margin: const EdgeInsets.symmetric(vertical: 4.0),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(11),
-                  ),
-                  child: InkWell(
-                    borderRadius: BorderRadius.circular(11),
-                    onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => PengumpulanTugas(task: task),
-                        ),
-                      );
-                    },
-                    child: ListTile(
-                      title: Text(task['name']),
-                      subtitle: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            '${task['class']}',
-                            style: Theme.of(context).textTheme.bodyMedium,
-                          ),
-                          Text(
-                            'Jatuh tempo: ${_formatDateTime(task['dueDate'])}',
-                            style: Theme.of(context).textTheme.bodySmall,
-                          ),
-                          if (task['isSubmitted'] &&
-                              task['submittedDate'] != null)
-                            Text(
-                              'Disubmit pada: ${_formatDateTime(task['submittedDate'])}',
-                              style: Theme.of(context).textTheme.bodySmall,
-                            ),
-                          Text(
-                            taskStatus,
-                            style: Theme.of(context)
-                                .textTheme
-                                .bodySmall
-                                ?.copyWith(
-                                  color: isLateOrOverdue ? Colors.red : null,
-                                ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                );
-              }),
-            ],
-          ),
-        );
-      },
-    );
+    return groupedTasks;
   }
 
   String _getTaskStatusTab(DateTime dueDate, bool isSubmitted) {

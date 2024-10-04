@@ -89,110 +89,35 @@ class _ClassPageState extends State<ClassPage>
         controller: _tabController,
         children: [
           _buildTaskList(),
-          Stack(
-            children: [
-              ListView.builder(
-                itemCount: _members
-                    .where((member) => member['class'] == widget.className)
-                    .length,
-                itemBuilder: (context, index) {
-                  final filteredMembers = _members
-                      .where((member) => member['class'] == widget.className)
-                      .toList();
-                  final member = filteredMembers[index];
-                  return ListTile(
-                    leading: CircleAvatar(
-                      child: Text(member['name']![0]),
-                    ),
-                    title: Text(member['name']!),
-                    subtitle: Text(member['role']!),
-                    onTap: () {},
-                  );
-                },
-              ),
-              Positioned(
-                right: 16,
-                bottom: 16,
-                child: FloatingActionButton(
-                  onPressed: () {},
-                  child: const Icon(Icons.add),
-                ),
-              ),
-            ],
-          ),
+          _buildMemberList(),
         ],
       ),
     );
   }
 
   Widget _buildTaskList() {
-    final filteredTasks =
-        _tasks.where((task) => task['class'] == widget.className).toList();
-    filteredTasks.sort((a, b) => a['dueDate'].compareTo(b['dueDate']));
-
-    final groupedTasks = <DateTime, List<Map<String, dynamic>>>{};
-    for (var task in filteredTasks) {
-      final dueDate = DateTime(
-          task['dueDate'].year, task['dueDate'].month, task['dueDate'].day);
-      if (!groupedTasks.containsKey(dueDate)) {
-        groupedTasks[dueDate] = [];
-      }
-      groupedTasks[dueDate]!.add(task);
-    }
-
-    final sortedDates = groupedTasks.keys.toList()..sort();
+    final filteredTasks = _tasks
+        .where((task) => task['class'] == widget.className)
+        .toList()
+      ..sort((a, b) => a['dueDate'].compareTo(b['dueDate']));
 
     return Stack(
       children: [
         ListView.builder(
-          itemCount: sortedDates.length,
+          itemCount: filteredTasks.length,
           itemBuilder: (context, index) {
-            final date = sortedDates[index];
-            final tasksForDate = groupedTasks[date]!;
-
-            return Container(
-              padding:
-                  const EdgeInsets.symmetric(horizontal: 15.0, vertical: 10.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    '${date.day} ${_getMonthName(date.month)} ${_getDayName(date)}',
-                    style: const TextStyle(fontWeight: FontWeight.bold),
-                  ),
-                  ...tasksForDate.map((task) {
-                    return Card(
-                      margin: const EdgeInsets.symmetric(vertical: 4.0),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(11),
-                      ),
-                      child: InkWell(
-                        borderRadius: BorderRadius.circular(11),
-                        onTap: () {},
-                        child: ListTile(
-                          title: Text(task['name']),
-                          subtitle: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                '${task['class']}',
-                                style: Theme.of(context).textTheme.bodyMedium,
-                              ),
-                              Text(
-                                'Jatuh tempo: ${_formatDateTime(task['dueDate'])}',
-                                style: Theme.of(context).textTheme.bodySmall,
-                              ),
-                            ],
-                          ),
-                          trailing: const Icon(
-                            Icons.arrow_forward_ios,
-                            size: 15,
-                          ),
-                        ),
-                      ),
-                    );
-                  }),
-                ],
+            final task = filteredTasks[index];
+            return Card(
+              margin:
+                  const EdgeInsets.symmetric(vertical: 4.0, horizontal: 15.0),
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(11)),
+              child: ListTile(
+                title: Text(task['name']),
+                subtitle:
+                    Text('Jatuh tempo: ${_formatDateTime(task['dueDate'])}'),
+                trailing: const Icon(Icons.arrow_forward_ios, size: 15),
+                onTap: () {},
               ),
             );
           },
@@ -209,13 +134,38 @@ class _ClassPageState extends State<ClassPage>
     );
   }
 
-  String _formatDateTime(DateTime date) {
-    return '${date.day} ${_getMonthName(date.month)} ${date.year} '
-        '${date.hour.toString().padLeft(2, '0')}:'
-        '${date.minute.toString().padLeft(2, '0')}';
+  Widget _buildMemberList() {
+    final filteredMembers = _members
+        .where((member) => member['class'] == widget.className)
+        .toList();
+
+    return Stack(
+      children: [
+        ListView.builder(
+          itemCount: filteredMembers.length,
+          itemBuilder: (context, index) {
+            final member = filteredMembers[index];
+            return ListTile(
+              leading: CircleAvatar(child: Text(member['name']![0])),
+              title: Text(member['name']!),
+              subtitle: Text(member['role']!),
+              onTap: () {},
+            );
+          },
+        ),
+        Positioned(
+          right: 16,
+          bottom: 16,
+          child: FloatingActionButton(
+            onPressed: () {},
+            child: const Icon(Icons.add),
+          ),
+        ),
+      ],
+    );
   }
 
-  String _getMonthName(int month) {
+  String _formatDateTime(DateTime date) {
     const monthNames = [
       'Jan',
       'Feb',
@@ -230,10 +180,6 @@ class _ClassPageState extends State<ClassPage>
       'Nov',
       'Des'
     ];
-    return monthNames[month - 1];
-  }
-
-  String _getDayName(DateTime date) {
     const dayNames = [
       'Senin',
       'Selasa',
@@ -243,6 +189,7 @@ class _ClassPageState extends State<ClassPage>
       'Sabtu',
       'Minggu'
     ];
-    return dayNames[date.weekday - 1];
+    return '${date.day} ${monthNames[date.month - 1]} ${date.year} ${dayNames[date.weekday - 1]} '
+        '${date.hour.toString().padLeft(2, '0')}:${date.minute.toString().padLeft(2, '0')}';
   }
 }
