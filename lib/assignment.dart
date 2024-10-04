@@ -53,18 +53,38 @@ class _PengumpulanTugasState extends State<PengumpulanTugas> {
       appBar: AppBar(
         title: const Text('Pengumpulan Tugas'),
       ),
-      body: Center(
+      body: SingleChildScrollView(
+        padding: const EdgeInsets.all(16.0),
         child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            ElevatedButton(
+            Card(
+              child: Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const Text(
+                      'Informasi Tugas',
+                      style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                    ),
+                    const SizedBox(height: 10),
+                    const Text('Format pengumpulan Tugas: PDF, Video, Gambar'),
+                    const Text('Tenggat Waktu: Besok Malam'),
+                  ],
+                ),
+              ),
+            ),
+            const SizedBox(height: 20),
+            ElevatedButton.icon(
               onPressed: _pilihFile,
-              child: const Text('Pilih File'),
+              icon: const Icon(Icons.file_upload),
+              label: const Text('Pilih File'),
             ),
             const SizedBox(height: 20),
             _tampilkanPreview(),
             const SizedBox(height: 20),
-            ElevatedButton(
+            ElevatedButton.icon(
               onPressed: _selectedFile != null
                   ? () {
                       // Implementasi logika untuk mengunggah file
@@ -73,7 +93,8 @@ class _PengumpulanTugasState extends State<PengumpulanTugas> {
                       );
                     }
                   : null,
-              child: const Text('Unggah Tugas'),
+              icon: const Icon(Icons.cloud_upload),
+              label: const Text('Unggah Tugas'),
             ),
           ],
         ),
