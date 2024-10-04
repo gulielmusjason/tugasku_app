@@ -83,6 +83,13 @@ class _TaskPageMenuState extends State<TaskPageMenu>
         'isSubmitted': true,
         'submittedDate': DateTime(2024, 10, 8, 23, 00)
       },
+      {
+        'name': 'Tugas Bahasa',
+        'class': 'Bahasa Inggris',
+        'dueDate': DateTime(2024, 10, 8, 23, 50),
+        'isSubmitted': true,
+        'submittedDate': DateTime(2024, 10, 8, 23, 56)
+      },
     ];
 
     tasks.sort((a, b) => a['dueDate'].compareTo(b['dueDate']));
@@ -131,42 +138,50 @@ class _TaskPageMenuState extends State<TaskPageMenu>
                     taskStatus == 'Lewat Jatuh Tempo' || taskStatus == 'Telat';
                 return Card(
                   margin: const EdgeInsets.symmetric(vertical: 4.0),
-                  child: ListTile(
-                    title: Text(task['name']),
-                    subtitle: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          '${task['class']}',
-                          style: Theme.of(context).textTheme.bodyMedium,
-                        ),
-                        Text(
-                          'Jatuh tempo: ${_formatDateTime(task['dueDate'])}',
-                          style: Theme.of(context).textTheme.bodySmall,
-                        ),
-                        if (task['isSubmitted'] &&
-                            task['submittedDate'] != null)
-                          Text(
-                            'Disubmit pada: ${_formatDateTime(task['submittedDate'])}',
-                            style: Theme.of(context).textTheme.bodySmall,
-                          ),
-                        Text(
-                          taskStatus,
-                          style:
-                              Theme.of(context).textTheme.bodySmall?.copyWith(
-                                    color: isLateOrOverdue ? Colors.red : null,
-                                  ),
-                        ),
-                      ],
-                    ),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(11),
+                  ),
+                  child: InkWell(
+                    borderRadius: BorderRadius.circular(11),
                     onTap: () {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (context) => const PengumpulanTugas(),
+                          builder: (context) => PengumpulanTugas(task: task),
                         ),
                       );
                     },
+                    child: ListTile(
+                      title: Text(task['name']),
+                      subtitle: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            '${task['class']}',
+                            style: Theme.of(context).textTheme.bodyMedium,
+                          ),
+                          Text(
+                            'Jatuh tempo: ${_formatDateTime(task['dueDate'])}',
+                            style: Theme.of(context).textTheme.bodySmall,
+                          ),
+                          if (task['isSubmitted'] &&
+                              task['submittedDate'] != null)
+                            Text(
+                              'Disubmit pada: ${_formatDateTime(task['submittedDate'])}',
+                              style: Theme.of(context).textTheme.bodySmall,
+                            ),
+                          Text(
+                            taskStatus,
+                            style: Theme.of(context)
+                                .textTheme
+                                .bodySmall
+                                ?.copyWith(
+                                  color: isLateOrOverdue ? Colors.red : null,
+                                ),
+                          ),
+                        ],
+                      ),
+                    ),
                   ),
                 );
               }),

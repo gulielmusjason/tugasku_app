@@ -4,7 +4,9 @@ import 'package:flutter/material.dart';
 import 'package:path/path.dart' as path;
 
 class PengumpulanTugas extends StatefulWidget {
-  const PengumpulanTugas({super.key});
+  final Map<String, dynamic> task;
+
+  const PengumpulanTugas({super.key, required this.task});
 
   @override
   State<PengumpulanTugas> createState() => _PengumpulanTugasState();
@@ -67,7 +69,10 @@ class _PengumpulanTugasState extends State<PengumpulanTugas> {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             _buildTugasCard(
-                'Matematika', 'Tugas Akhir Semester', '30 Juni 2024'),
+              widget.task['name'],
+              widget.task['class'],
+              _formatDateTime(widget.task['dueDate']),
+            ),
           ],
         ),
       ),
@@ -90,7 +95,7 @@ class _PengumpulanTugasState extends State<PengumpulanTugas> {
   }
 
   Widget _buildTugasCard(
-      String mataPelajaran, String judulTugas, String tenggatWaktu) {
+      String judulTugas, String mataPelajaran, String tenggatWaktu) {
     return Card(
       child: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -98,11 +103,11 @@ class _PengumpulanTugasState extends State<PengumpulanTugas> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              mataPelajaran,
+              judulTugas,
               style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 10),
-            Text(judulTugas),
+            Text(mataPelajaran),
             Text('Jatuh Tempo: $tenggatWaktu'),
             const SizedBox(height: 16),
             ElevatedButton.icon(
@@ -133,5 +138,29 @@ class _PengumpulanTugasState extends State<PengumpulanTugas> {
         ),
       ),
     );
+  }
+
+  String _formatDateTime(DateTime date) {
+    return '${date.day} ${_getMonthName(date.month)} ${date.year} '
+        '${date.hour.toString().padLeft(2, '0')}:'
+        '${date.minute.toString().padLeft(2, '0')}';
+  }
+
+  String _getMonthName(int month) {
+    const monthNames = [
+      'Jan',
+      'Feb',
+      'Mar',
+      'Apr',
+      'Mei',
+      'Jun',
+      'Jul',
+      'Agu',
+      'Sep',
+      'Okt',
+      'Nov',
+      'Des'
+    ];
+    return monthNames[month - 1];
   }
 }
