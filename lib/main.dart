@@ -57,6 +57,9 @@ class _MyAppState extends State<MyApp> {
                   foregroundColor: Colors.white,
                 ),
               ),
+              iconTheme: const IconThemeData(
+                color: Colors.brown,
+              ),
             ),
             darkTheme: ThemeData(
               useMaterial3: true,
@@ -88,6 +91,9 @@ class _MyAppState extends State<MyApp> {
                   backgroundColor: Colors.brown.shade300,
                   foregroundColor: Colors.white,
                 ),
+              ),
+              iconTheme: IconThemeData(
+                color: Colors.brown.shade300,
               ),
             ),
             themeMode: themeNotifier!.value,

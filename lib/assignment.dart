@@ -24,17 +24,16 @@ class _PengumpulanTugasState extends State<PengumpulanTugas> {
         allowedExtensions: ['pdf', 'doc', 'docx', 'jpg', 'jpeg', 'png'],
       );
 
-      if (result != null) {
+      if (result != null && result.files.isNotEmpty) {
         File file = File(result.files.single.path!);
         setState(() {
           _selectedFiles[mataPelajaran] = file;
-          _fileTypes[mataPelajaran] = result.files.single.extension!;
+          _fileTypes[mataPelajaran] = result.files.single.extension ?? '';
         });
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('File untuk $mataPelajaran berhasil dipilih')),
+          SnackBar(content: Text('File untuk $mataPelajaran berhasil dipilih: ${file.path}')),
         );
       } else {
-        // Pengguna membatalkan pemilihan file
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('Pemilihan file dibatalkan')),
         );
@@ -77,19 +76,23 @@ class _PengumpulanTugasState extends State<PengumpulanTugas> {
   }
 
   Widget _tampilkanPreview(String mataPelajaran) {
-    if (_selectedFiles[mataPelajaran] == null) {
+    final file = _selectedFiles[mataPelajaran];
+    final fileType = _fileTypes[mataPelajaran];
+
+    if (file == null || fileType == null) {
       return const Text('Belum ada file yang dipilih');
     }
 
-    switch (_fileTypes[mataPelajaran]) {
+    switch (fileType.toLowerCase()) {
       case 'pdf':
         return const Icon(Icons.picture_as_pdf, size: 100);
       case 'jpg':
       case 'jpeg':
       case 'png':
-        return Image.file(_selectedFiles[mataPelajaran]!, height: 200);
-      case 'mp4':
-        return const Icon(Icons.video_file, size: 100);
+        return Image.file(file, height: 200);
+      case 'doc':
+      case 'docx':
+        return const Icon(Icons.description, size: 100);
       default:
         return const Text('Format file tidak didukung');
     }
@@ -157,7 +160,7 @@ class _PengumpulanTugasState extends State<PengumpulanTugas> {
             _tampilkanPreview(mataPelajaran),
             const SizedBox(height: 16),
             ElevatedButton.icon(
-              onPressed: _selectedFiles[mataPelajaran] != null && _isUploading[mataPelajaran] != true
+              onPressed: _selectedFiles[mataPelajaran] != null && (_isUploading[mataPelajaran] != true)
                   ? () => _unggahFile(mataPelajaran)
                   : null,
               icon: _isUploading[mataPelajaran] == true
@@ -175,4 +178,3 @@ class _PengumpulanTugasState extends State<PengumpulanTugas> {
     );
   }
 }
-
