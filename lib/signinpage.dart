@@ -13,12 +13,9 @@ class _SignInPageState extends State<SignInPage> {
   bool _passwordVisible = true;
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
-  ThemeMode _themeMode = ThemeMode.dark;
 
   void changeTheme(ThemeMode themeMode) {
-    setState(() {
-      _themeMode = themeMode;
-    });
+    setState(() {});
   }
 
   @override
@@ -119,8 +116,7 @@ class _SignInPageState extends State<SignInPage> {
             Navigator.push(
               context,
               MaterialPageRoute(
-                builder: (context) => MainApp(
-                    changeTheme: changeTheme, currentThemeMode: _themeMode),
+                builder: (context) => const MainApp(),
               ),
             );
           },

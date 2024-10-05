@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:tugasku_app/classpage.dart';
-import 'package:tugasku_app/kosong.dart';
 
 class ClassPageMenu extends StatefulWidget {
   const ClassPageMenu({super.key});
@@ -17,6 +16,37 @@ class _ClassPageMenuState extends State<ClassPageMenu> {
     {'name': 'IPS', 'teacher': 'Ibu Rina', 'icon': Icons.public},
     {'name': 'Bahasa Inggris', 'teacher': 'Mr. John', 'icon': Icons.language},
   ];
+
+  void _tambahKelas() {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Tambah Kelas'),
+          content: TextField(
+            decoration: const InputDecoration(hintText: 'Masukkan kode kelas'),
+            onSubmitted: (String kodeKelas) {
+              Navigator.of(context).pop();
+            },
+          ),
+          actions: <Widget>[
+            TextButton(
+              child: const Text('Batal'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+            TextButton(
+              child: const Text('Tambah'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -51,12 +81,7 @@ class _ClassPageMenuState extends State<ClassPageMenu> {
         ),
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: () => Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) => Kosong(),
-          ),
-        ),
+        onPressed: _tambahKelas,
         child: const Icon(Icons.add),
       ),
     );
