@@ -176,34 +176,13 @@ class _TaskPageMenuState extends State<TaskPageMenu>
     );
   }
 
-  void _navigateToPengumpulanTugas(Map<String, dynamic> task) async {
-    final result = await Navigator.push(
+  void _navigateToPengumpulanTugas(Map<String, dynamic> task) {
+    Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (context) => PengumpulanTugas(
-          className: task['class'] as String,
-          taskName: task['name'] as String,
-        ),
+        builder: (context) => PengumpulanTugas(task: task),
       ),
     );
-
-    if (result == true) {
-      // Tugas telah dikumpulkan, perbarui status tugas
-      setState(() {
-        task['isSubmitted'] = true;
-        task['submittedDate'] = DateTime.now();
-      });
-      // Refresh tampilan tugas
-      _refreshTasks();
-    }
-  }
-
-  void _refreshTasks() {
-    setState(() {
-      // Jika Anda menggunakan _getTasks() untuk mendapatkan daftar tugas,
-      // panggil fungsi tersebut di sini untuk memperbarui daftar
-      // _tasks = _getTasks();
-    });
   }
 
   List<Map<String, dynamic>> _getTasks() {

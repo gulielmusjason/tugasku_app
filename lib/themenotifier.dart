@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:tugasku_app/classpage.dart';
 
 class ThemeNotifier extends ValueNotifier<ThemeMode> {
   ThemeNotifier(super.value);
@@ -27,11 +26,4 @@ class ThemeNotifierProvider extends InheritedNotifier<ThemeNotifier> {
         context.dependOnInheritedWidgetOfExactType<ThemeNotifierProvider>();
     return provider?.notifier ?? ThemeNotifier(ThemeMode.system);
   }
-}
-
-void navigateToClassPage(BuildContext context, String className) {
-  Navigator.push(
-    context,
-    MaterialPageRoute(builder: (context) => ClassPage(className: className)),
-  );
 }
