@@ -12,8 +12,9 @@ dependencies:
   flutter:
     sdk: flutter
   cupertino_icons: ^1.0.8
-  file_picker: ^4.0.0
-  path: ^1.9.0
+  file_picker: ^8.1.2
+  path: ^1.8.3
+  shared_preferences: ^2.3.2
 
 dev_dependencies:
   flutter_test:

@@ -1,5 +1,3 @@
-// ignore_for_file: unnecessary_string_interpolations, prefer_const_constructors
-
 import 'package:flutter/material.dart';
 
 class Notifikasi {
@@ -89,8 +87,9 @@ class _ActivityPageMenuState extends State<ActivityPageMenu> {
     if (selisih.inHours < 24) return '${selisih.inHours} jam yang lalu';
     if (selisih.inDays == 1) return 'Kemarin';
     if (selisih.inDays < 7) return _getNamaHari(waktu);
-    if (sekarang.year == waktu.year)
+    if (sekarang.year == waktu.year) {
       return '${waktu.day} ${_getNamaBulan(waktu.month)}';
+    }
     return '${waktu.day} ${_getNamaBulan(waktu.month)} ${waktu.year}';
   }
 
@@ -143,7 +142,7 @@ class _ActivityPageMenuState extends State<ActivityPageMenu> {
             mainAxisSize: MainAxisSize.min,
             children: [
               Icon(_isAscending ? Icons.arrow_upward : Icons.arrow_downward),
-              SizedBox(width: 8),
+              const SizedBox(width: 8),
               Text(_isAscending ? "Terlama" : "Terbaru"),
             ],
           ),

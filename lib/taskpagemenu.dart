@@ -44,7 +44,7 @@ class _TaskPageMenuState extends State<TaskPageMenu>
       preferredSize: const Size.fromHeight(kToolbarHeight),
       child: SafeArea(
         child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 8.0),
+          padding: const EdgeInsets.all(8.0),
           child: Row(
             children: [
               Expanded(child: _buildTabButton('Mendatang', 0)),

@@ -1,10 +1,32 @@
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class ThemeNotifier extends ValueNotifier<ThemeMode> {
-  ThemeNotifier(super.value);
+  static const String _key = 'theme_mode';
 
-  void setThemeMode(ThemeMode mode) {
+  ThemeNotifier(super.mode) {
+    _loadSavedThemeMode();
+  }
+
+  Future<void> setThemeMode(ThemeMode mode) async {
     value = mode;
+    _saveThemeMode(mode);
+  }
+
+  Future<void> _loadSavedThemeMode() async {
+    final prefs = await SharedPreferences.getInstance();
+    final savedMode = prefs.getString(_key);
+    if (savedMode != null) {
+      value = ThemeMode.values.firstWhere(
+        (e) => e.toString() == savedMode,
+        orElse: () => ThemeMode.system,
+      );
+    }
+  }
+
+  Future<void> _saveThemeMode(ThemeMode mode) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString(_key, mode.toString());
   }
 }
 

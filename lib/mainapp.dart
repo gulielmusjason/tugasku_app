@@ -6,14 +6,7 @@ import 'package:tugasku_app/signinpage.dart';
 import 'package:tugasku_app/taskpagemenu.dart';
 
 class MainApp extends StatefulWidget {
-  final Function(ThemeMode) changeTheme;
-  final ThemeMode currentThemeMode;
-
-  const MainApp({
-    super.key,
-    required this.changeTheme,
-    required this.currentThemeMode,
-  });
+  const MainApp({super.key});
 
   @override
   State<MainApp> createState() => _MainAppState();
