@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 class AddTaskPage extends StatefulWidget {
   final String className;
@@ -14,6 +15,9 @@ class _AddTaskPageState extends State<AddTaskPage> {
   late String _taskName;
   late DateTime _dueDate = DateTime.now();
   String? _selectedStudent;
+  final TextEditingController _hourController = TextEditingController(text: '00');
+  final TextEditingController _minuteController = TextEditingController(text: '00');
+  final TextEditingController _descriptionController = TextEditingController();
 
   // Daftar siswa (sebaiknya diambil dari sumber data yang sesuai)
   final List<String> _students = [
@@ -23,6 +27,14 @@ class _AddTaskPageState extends State<AddTaskPage> {
     'Kartika Sari',
     // ... tambahkan siswa lainnya sesuai kelas
   ];
+
+  @override
+  void dispose() {
+    _hourController.dispose();
+    _minuteController.dispose();
+    _descriptionController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -92,16 +104,88 @@ class _AddTaskPageState extends State<AddTaskPage> {
               },
             ),
             SizedBox(height: 16.0),
+            Row(
+              children: [
+                Expanded(
+                  child: TextFormField(
+                    controller: _hourController,
+                    decoration: InputDecoration(labelText: 'Jam'),
+                    keyboardType: TextInputType.number,
+                    inputFormatters: [
+                      FilteringTextInputFormatter.digitsOnly,
+                      LengthLimitingTextInputFormatter(2),
+                    ],
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Mohon isi jam';
+                      }
+                      int? hour = int.tryParse(value);
+                      if (hour == null || hour < 0 || hour > 23) {
+                        return 'Jam harus antara 0-23';
+                      }
+                      return null;
+                    },
+                  ),
+                ),
+                SizedBox(width: 16),
+                Expanded(
+                  child: TextFormField(
+                    controller: _minuteController,
+                    decoration: InputDecoration(labelText: 'Menit'),
+                    keyboardType: TextInputType.number,
+                    inputFormatters: [
+                      FilteringTextInputFormatter.digitsOnly,
+                      LengthLimitingTextInputFormatter(2),
+                    ],
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Mohon isi menit';
+                      }
+                      int? minute = int.tryParse(value);
+                      if (minute == null || minute < 0 || minute > 59) {
+                        return 'Menit harus antara 0-59';
+                      }
+                      return null;
+                    },
+                  ),
+                ),
+              ],
+            ),
+            SizedBox(height: 16.0),
+            TextFormField(
+              controller: _descriptionController,
+              decoration: InputDecoration(
+                labelText: 'Deskripsi Tugas',
+                border: OutlineInputBorder(),
+              ),
+              maxLines: 3,
+              validator: (value) {
+                if (value == null || value.isEmpty) {
+                  return 'Mohon isi deskripsi tugas';
+                }
+                return null;
+              },
+            ),
+            SizedBox(height: 16.0),
             ElevatedButton(
               child: Text('Simpan Tugas'),
               onPressed: () {
                 if (_formKey.currentState!.validate()) {
                   _formKey.currentState!.save();
+                  int hour = int.parse(_hourController.text);
+                  int minute = int.parse(_minuteController.text);
                   Navigator.pop(context, {
                     'name': _taskName,
                     'class': widget.className,
-                    'dueDate': _dueDate,
+                    'dueDate': DateTime(
+                      _dueDate.year,
+                      _dueDate.month,
+                      _dueDate.day,
+                      hour,
+                      minute,
+                    ),
                     'student': _selectedStudent,
+                    'description': _descriptionController.text,
                   });
                 }
               },
