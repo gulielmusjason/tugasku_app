@@ -13,6 +13,16 @@ class _AddTaskPageState extends State<AddTaskPage> {
   final _formKey = GlobalKey<FormState>();
   late String _taskName;
   late DateTime _dueDate = DateTime.now();
+  String? _selectedStudent;
+
+  // Daftar siswa (sebaiknya diambil dari sumber data yang sesuai)
+  final List<String> _students = [
+    'Ani Wijaya',
+    'Indah Permata',
+    'Fajar Ramadhan',
+    'Kartika Sari',
+    // ... tambahkan siswa lainnya sesuai kelas
+  ];
 
   @override
   Widget build(BuildContext context) {
@@ -54,6 +64,33 @@ class _AddTaskPageState extends State<AddTaskPage> {
                 }
               },
             ),
+            SizedBox(height: 8.0),
+            Text(
+              'Tanggal Jatuh Tempo: ${_formatDate(_dueDate)}',
+              style: TextStyle(fontSize: 16),
+            ),
+            SizedBox(height: 16.0),
+            DropdownButtonFormField<String>(
+              decoration: InputDecoration(labelText: 'Pilih Siswa'),
+              value: _selectedStudent,
+              items: _students.map((String student) {
+                return DropdownMenuItem<String>(
+                  value: student,
+                  child: Text(student),
+                );
+              }).toList(),
+              onChanged: (String? newValue) {
+                setState(() {
+                  _selectedStudent = newValue;
+                });
+              },
+              validator: (value) {
+                if (value == null || value.isEmpty) {
+                  return 'Mohon pilih siswa';
+                }
+                return null;
+              },
+            ),
             SizedBox(height: 16.0),
             ElevatedButton(
               child: Text('Simpan Tugas'),
@@ -64,6 +101,7 @@ class _AddTaskPageState extends State<AddTaskPage> {
                     'name': _taskName,
                     'class': widget.className,
                     'dueDate': _dueDate,
+                    'student': _selectedStudent,
                   });
                 }
               },
@@ -72,5 +110,9 @@ class _AddTaskPageState extends State<AddTaskPage> {
         ),
       ),
     );
+  }
+
+  String _formatDate(DateTime date) {
+    return '${date.day}/${date.month}/${date.year}';
   }
 }
