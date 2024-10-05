@@ -5,13 +5,13 @@ import 'evaluation.dart';
 class PengumpulanSiswaPage extends StatelessWidget {
   final String className;
   final String taskName;
-  final List<Map<String, dynamic>> submissions;
+  final List<Map<String, String>> members;
 
   const PengumpulanSiswaPage({
     Key? key,
     required this.className,
     required this.taskName,
-    required this.submissions,
+    required this.members,
   }) : super(key: key);
 
   @override
@@ -37,36 +37,39 @@ class PengumpulanSiswaPage extends StatelessWidget {
                   'Tugas: $taskName',
                   style: TextStyle(fontSize: 16),
                 ),
+                SizedBox(height: 16),
+                Text(
+                  'Semua siswa telah mengumpulkan tugas',
+                  style: TextStyle(fontSize: 16, color: Colors.green),
+                ),
               ],
             ),
           ),
           Expanded(
             child: ListView.builder(
-              itemCount: submissions.length,
+              itemCount: members.length,
               itemBuilder: (context, index) {
-                final submission = submissions[index];
+                final member = members[index];
                 return ListTile(
                   leading: CircleAvatar(
-                    child: Text(submission['student'][0]),
+                    child: Text(member['name']![0]),
                   ),
-                  title: Text(submission['student']),
-                  subtitle: Text('Dikumpulkan: ${_formatDateTime(submission['submissionDate'])}'),
-                  trailing: ElevatedButton(
-                    child: Text('Evaluasi'),
-                    onPressed: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => EvaluationPage(
-                            className: className,
-                            itemName: taskName,
-                            isTask: true,
-                            studentName: submission['student'],
-                          ),
+                  title: Text(member['name']!),
+                  subtitle: Text('Dikumpulkan: ${_formatDateTime(DateTime.now())}'),
+                  trailing: Icon(Icons.check_circle, color: Colors.green),
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => EvaluationPage(
+                          className: className,
+                          itemName: taskName,
+                          isTask: true,
+                          studentName: member['name'],
                         ),
-                      );
-                    },
-                  ),
+                      ),
+                    );
+                  },
                 );
               },
             ),
