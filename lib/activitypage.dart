@@ -1,13 +1,5 @@
 import 'package:flutter/material.dart';
 
-class Notification {
-  final String sender;
-  final String message;
-  final String time;
-
-  Notification({required this.sender, required this.message, required this.time});
-}
-
 class ActivityPage extends StatefulWidget {
   const ActivityPage({super.key});
 
@@ -16,42 +8,76 @@ class ActivityPage extends StatefulWidget {
 }
 
 class _ActivityPageState extends State<ActivityPage> {
-  // Daftar notifikasi sementara
-  final List<Notification> notifications = [
-    Notification(sender: "ERY DEWAYANI", message: "Guru Matematika", time: "Add Tugas"),
-    Notification(sender: "DEDI TRISNAWARMAN", message: "Guru Sejarah", time: "Add Tugas"),
-    Notification(sender: "TONY LIE", message: "Guru Kimia", time: "Add Tugas"),
-    Notification(sender: "WASINO", message: "Guru Seni", time: "Add Tugas"),
-    Notification(sender: "DEBBY", message: "Guru Bahasa Inggris", time: "Add Tugas"),
-  ];
-
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Aktivitas'),
+        title: const Text('Activity'),
       ),
-      body: ListView.builder(
-        itemCount: notifications.length,
-        itemBuilder: (context, index) {
-          final notification = notifications[index];
-          return ListTile(
-            leading: CircleAvatar(
-              child: Text(notification.sender[0]), // Inisial pengirim
-            ),
-            title: Text(notification.sender),
-            subtitle: Text(notification.message),
-            trailing: Text(notification.time),
-          );
-        },
-      ),
+      body: _buildTaskList(),
     );
   }
-}
 
-void main() {
-  runApp(const MaterialApp(
-    home: ActivityPage(),
-  ));
+  Widget _buildTaskList() {
+    final Map<DateTime, List<String>> tasksByDate = {
+      DateTime(2023, 10, 3): [
+        'Tugas Matematika',
+        'Presentasi Sejarah',
+        'Laporan Kimia'
+      ],
+      DateTime(2023, 10, 4): ['Proyek Seni', 'Kuis Bahasa Inggris'],
+    };
+
+    return ListView.builder(
+      itemCount: tasksByDate.length,
+      itemBuilder: (context, index) {
+        final date = tasksByDate.keys.elementAt(index);
+        final tasks = tasksByDate[date]!;
+
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Text(
+                '${date.day} ${_getMonthName(date.month)} ${date.year}',
+                style: Theme.of(context).textTheme.titleMedium,
+              ),
+            ),
+            ...tasks.map((task) {
+              return Material(
+                color: Colors.transparent,
+                child: InkWell(
+                  onTap: () {},
+                  child: ListTile(
+                    title: Text(task),
+                    subtitle: Text('Deskripsi $task'),
+                    trailing: const Text('Status'), // You can change this if needed
+                  ),
+                ),
+              );
+            }),
+          ],
+        );
+      },
+    );
+  }
+
+  String _getMonthName(int month) {
+    const monthNames = [
+      'Januari',
+      'Februari',
+      'Maret',
+      'April',
+      'Mei',
+      'Juni',
+      'Juli',
+      'Agustus',
+      'September',
+      'Oktober',
+      'November',
+      'Desember'
+    ];
+    return monthNames[month - 1];
+  }
 }
