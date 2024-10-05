@@ -1,4 +1,10 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+
+import 'evaluation.dart';
+import 'mission.dart';
 
 class ClassPage extends StatefulWidget {
   final String className;
@@ -11,39 +17,7 @@ class ClassPage extends StatefulWidget {
 class _ClassPageState extends State<ClassPage>
     with SingleTickerProviderStateMixin {
   late TabController _tabController;
-
-  final List<Map<String, dynamic>> _tasks = [
-    {
-      'name': 'Tugas Matematika',
-      'class': 'Matematika',
-      'dueDate': DateTime(2024, 11, 3, 23, 59),
-    },
-    {
-      'name': 'Tugas Bahasa Indonesia',
-      'class': 'Bahasa Indonesia',
-      'dueDate': DateTime(2024, 10, 15, 23, 59),
-    },
-    {
-      'name': 'Tugas IPA',
-      'class': 'IPA',
-      'dueDate': DateTime(2023, 10, 7, 23, 59),
-    },
-    {
-      'name': 'Tugas IPS',
-      'class': 'IPS',
-      'dueDate': DateTime(2024, 10, 7, 23, 00),
-    },
-    {
-      'name': 'Tugas Bahasa Inggris',
-      'class': 'Bahasa Inggris',
-      'dueDate': DateTime(2024, 10, 8, 23, 55),
-    },
-    {
-      'name': 'Tugas Bahasa',
-      'class': 'Bahasa Inggris',
-      'dueDate': DateTime(2024, 10, 8, 23, 50),
-    },
-  ];
+  List<Map<String, dynamic>> _tasks = [];
 
   final List<Map<String, String>> _members = [
     {'name': 'Ani Wijaya', 'role': 'Siswa', 'class': 'Bahasa Indonesia'},
@@ -64,12 +38,42 @@ class _ClassPageState extends State<ClassPage>
   void initState() {
     super.initState();
     _tabController = TabController(length: 2, vsync: this);
+    _loadTasks();
   }
 
   @override
   void dispose() {
     _tabController.dispose();
     super.dispose();
+  }
+
+  // Fungsi untuk memuat tugas dari penyimpanan lokal
+  Future<void> _loadTasks() async {
+    final prefs = await SharedPreferences.getInstance();
+    final tasksJson = prefs.getString('tasks') ?? '[]';
+    final tasksList = json.decode(tasksJson) as List;
+    setState(() {
+      _tasks = tasksList.map((task) {
+        return {
+          'name': task['name'],
+          'class': task['class'],
+          'dueDate': DateTime.parse(task['dueDate']),
+        };
+      }).toList();
+    });
+  }
+
+  // Fungsi untuk menyimpan tugas ke penyimpanan lokal
+  Future<void> _saveTasks() async {
+    final prefs = await SharedPreferences.getInstance();
+    final tasksJson = json.encode(_tasks.map((task) {
+      return {
+        'name': task['name'],
+        'class': task['class'],
+        'dueDate': task['dueDate'].toIso8601String(),
+      };
+    }).toList());
+    await prefs.setString('tasks', tasksJson);
   }
 
   @override
@@ -117,7 +121,7 @@ class _ClassPageState extends State<ClassPage>
                 subtitle:
                     Text('Jatuh tempo: ${_formatDateTime(task['dueDate'])}'),
                 trailing: const Icon(Icons.arrow_forward_ios, size: 15),
-                onTap: () {},
+                onTap: () => _navigateToTaskEvaluation(task['name']),
               ),
             );
           },
@@ -126,12 +130,66 @@ class _ClassPageState extends State<ClassPage>
           right: 16,
           bottom: 16,
           child: FloatingActionButton(
-            onPressed: () {},
+            onPressed: _addNewTask,
             child: const Icon(Icons.add),
           ),
         ),
       ],
     );
+  }
+
+  void _addNewTask() async {
+    final result = await Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => AddTaskPage(className: widget.className),
+      ),
+    );
+
+    if (result != null) {
+      setState(() {
+        _tasks.add(result);
+      });
+      await _saveTasks(); // Simpan tugas setelah menambahkan
+    }
+  }
+
+  void _navigateToTaskEvaluation(String taskName) async {
+    final result = await Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => EvaluationPage(
+          className: widget.className,
+          itemName: taskName,
+          isTask: true,
+        ),
+      ),
+    );
+
+    if (result != null) {
+      // Implementasi logika untuk menyimpan hasil evaluasi tugas
+      print('Nilai tugas: ${result['score']}, Feedback: ${result['feedback']}');
+      // Anda bisa menambahkan logika untuk memperbarui data tugas di sini
+    }
+  }
+
+  void _navigateToEvaluation(String studentName) async {
+    final result = await Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => EvaluationPage(
+          className: widget.className,
+          itemName: studentName,
+          isTask: false,
+        ),
+      ),
+    );
+
+    if (result != null) {
+      // Implementasi logika untuk menyimpan hasil evaluasi siswa
+      print('Nilai siswa: ${result['score']}, Feedback: ${result['feedback']}');
+      // Anda bisa menambahkan logika untuk memperbarui data siswa di sini
+    }
   }
 
   Widget _buildMemberList() {
