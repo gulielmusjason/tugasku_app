@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:tugasku_app/notificationpagemenu.dart';
 import 'package:tugasku_app/classpagemenu.dart';
+import 'package:tugasku_app/notificationpagemenu.dart';
 import 'package:tugasku_app/settingpage.dart';
 import 'package:tugasku_app/signinpage.dart';
 import 'package:tugasku_app/taskpagemenu.dart';
@@ -22,10 +22,10 @@ class MainApp extends StatefulWidget {
 class _MainAppState extends State<MainApp> {
   int _selectIndex = 0;
 
-  static const List<Widget> _widgetOptions = [
-    ClassPageMenu(),
-    TaskPageMenu(),
-    NotificationPageMenu(),
+  List<Widget> get _widgetOptions => [
+    const ClassPageMenu(),
+    const TaskPageMenu(),
+    const NotificationPageMenu(),
   ];
 
   static const List<String> _appBarTitles = [
@@ -42,17 +42,13 @@ class _MainAppState extends State<MainApp> {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      theme: Theme.of(context),
-      home: Scaffold(
-        appBar: _buildAppBar(),
-        drawer: _buildDrawer(),
-        body: Center(
-          child: _widgetOptions[_selectIndex],
-        ),
-        bottomNavigationBar: _buildBottomNavigationBar(),
+    return Scaffold(
+      appBar: _buildAppBar(),
+      drawer: _buildDrawer(),
+      body: Center(
+        child: _widgetOptions[_selectIndex],
       ),
+      bottomNavigationBar: _buildBottomNavigationBar(),
     );
   }
 
@@ -98,14 +94,17 @@ class _MainAppState extends State<MainApp> {
             ListTile(
               leading: const Icon(Icons.settings),
               title: const Text('Pengaturan'),
-              onTap: () => _navigateTo(const SettingPage()),
+              onTap: () => _navigateTo(SettingPage(
+                changeTheme: widget.changeTheme,
+                currentThemeMode: widget.currentThemeMode,
+              )),
             ),
             ListTile(
               leading: const Icon(Icons.logout),
               title: const Text('Keluar'),
               onTap: () {
                 Navigator.pop(context);
-                _navigateTo(const SignInPage());
+                _navigateTo(SignInPage());
               },
             ),
           ],
