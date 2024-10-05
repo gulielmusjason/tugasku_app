@@ -39,7 +39,6 @@ class _ClassPageMenuState extends State<ClassPageMenu> {
             TextButton(
               child: const Text('Tambah'),
               onPressed: () {
-                // Logika untuk menambah kelas berdasarkan kode
                 Navigator.of(context).pop();
               },
             ),
