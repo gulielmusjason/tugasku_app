@@ -42,17 +42,13 @@ class _MainAppState extends State<MainApp> {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      theme: Theme.of(context),
-      home: Scaffold(
-        appBar: _buildAppBar(),
-        drawer: _buildDrawer(),
-        body: Center(
-          child: _widgetOptions[_selectIndex],
-        ),
-        bottomNavigationBar: _buildBottomNavigationBar(),
+    return Scaffold(
+      appBar: _buildAppBar(),
+      drawer: _buildDrawer(),
+      body: Center(
+        child: _widgetOptions[_selectIndex],
       ),
+      bottomNavigationBar: _buildBottomNavigationBar(),
     );
   }
 
