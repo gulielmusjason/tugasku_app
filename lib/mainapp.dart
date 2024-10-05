@@ -15,10 +15,10 @@ class MainApp extends StatefulWidget {
 class _MainAppState extends State<MainApp> {
   int _selectIndex = 0;
 
-  List<Widget> get _widgetOptions => [
-    const ClassPageMenu(),
-    const TaskPageMenu(),
-    const NotificationPageMenu(),
+  static const List<Widget> _widgetOptions = [
+    ClassPageMenu(),
+    TaskPageMenu(),
+    NotificationPageMenu(),
   ];
 
   static const List<String> _appBarTitles = [
@@ -87,17 +87,14 @@ class _MainAppState extends State<MainApp> {
             ListTile(
               leading: const Icon(Icons.settings),
               title: const Text('Pengaturan'),
-              onTap: () => _navigateTo(SettingPage(
-                changeTheme: widget.changeTheme,
-                currentThemeMode: widget.currentThemeMode,
-              )),
+              onTap: () => _navigateTo(const SettingPage()),
             ),
             ListTile(
               leading: const Icon(Icons.logout),
               title: const Text('Keluar'),
               onTap: () {
                 Navigator.pop(context);
-                _navigateTo(SignInPage());
+                _navigateTo(const SignInPage());
               },
             ),
           ],

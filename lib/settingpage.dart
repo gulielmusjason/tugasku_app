@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:tugasku_app/themenotifier.dart';
 
 class SettingPage extends StatelessWidget {
-  const SettingPage({super.key, required Function(ThemeMode p1) changeTheme, required ThemeMode currentThemeMode});
+  const SettingPage({super.key});
 
   @override
   Widget build(BuildContext context) {
