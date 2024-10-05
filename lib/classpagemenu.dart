@@ -54,7 +54,7 @@ class _ClassPageMenuState extends State<ClassPageMenu> {
         onPressed: () => Navigator.push(
           context,
           MaterialPageRoute(
-            builder: (context) => Kosong(),
+            builder: (context) => const Kosong(),
           ),
         ),
         child: const Icon(Icons.add),
