@@ -45,132 +45,102 @@ class _EvaluationPageState extends State<EvaluationPage> {
       appBar: AppBar(
         title: Text('Evaluasi ${widget.className}'),
       ),
-      body: Form(
-        key: _formKey,
-        child: SingleChildScrollView(
-          padding: const EdgeInsets.all(16.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                  widget.isTask
-                      ? 'Tugas: ${widget.itemName}'
-                      : 'Siswa: ${widget.itemName}',
-                  style: const TextStyle(
-                      fontSize: 18, fontWeight: FontWeight.bold)),
-              const SizedBox(height: 20),
-              widget.studentName != null
-                  ? Text('Siswa: ${widget.studentName}',
-                      style: const TextStyle(fontSize: 16))
-                  : DropdownButtonFormField<String>(
-                      decoration: const InputDecoration(
-                        labelText: 'Pilih Siswa',
-                        border: OutlineInputBorder(),
-                      ),
-                      value: _selectedStudent.isEmpty ? null : _selectedStudent,
-                      items: [
-                        'Ani Wijaya',
-                        'Indah Permata',
-                        'Fajar Ramadhan',
-                        'Kartika Sari',
-                      ].map((String student) {
-                        return DropdownMenuItem<String>(
-                          value: student,
-                          child: Text(student),
-                        );
-                      }).toList(),
-                      onChanged: (String? newValue) {
-                        setState(() {
-                          _selectedStudent = newValue ?? '';
-                        });
-                      },
-                      validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          return 'Mohon pilih siswa';
-                        }
-                        return null;
-                      },
-                    ),
-              const SizedBox(height: 20),
-              TextFormField(
-                controller: _scoreController,
-                decoration: const InputDecoration(
-                  labelText: 'Nilai (0-100)',
-                  border: OutlineInputBorder(),
+      body: Card(
+        margin: const EdgeInsets.all(16.0),
+        child: Form(
+          key: _formKey,
+          child: SingleChildScrollView(
+            padding: const EdgeInsets.all(16.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(widget.isTask ? widget.itemName : widget.itemName,
+                    style: const TextStyle(
+                        fontSize: 18, fontWeight: FontWeight.bold)),
+                const SizedBox(height: 20),
+                Text(widget.studentName ?? 'Nama Siswa Tidak Tersedia',
+                    style: const TextStyle(fontSize: 16)),
+                const SizedBox(height: 20),
+                TextFormField(
+                  controller: _scoreController,
+                  decoration: const InputDecoration(
+                    labelText: 'Nilai (0-100)',
+                    border: OutlineInputBorder(),
+                  ),
+                  keyboardType: TextInputType.number,
+                  inputFormatters: [
+                    FilteringTextInputFormatter.digitsOnly,
+                    LengthLimitingTextInputFormatter(3),
+                  ],
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Mohon masukkan nilai';
+                    }
+                    int? score = int.tryParse(value);
+                    if (score == null || score < 0 || score > 100) {
+                      return 'Nilai harus antara 0 dan 100';
+                    }
+                    return null;
+                  },
                 ),
-                keyboardType: TextInputType.number,
-                inputFormatters: [
-                  FilteringTextInputFormatter.digitsOnly,
-                  LengthLimitingTextInputFormatter(3),
-                ],
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Mohon masukkan nilai';
-                  }
-                  int? score = int.tryParse(value);
-                  if (score == null || score < 0 || score > 100) {
-                    return 'Nilai harus antara 0 dan 100';
-                  }
-                  return null;
-                },
-              ),
-              const SizedBox(height: 20),
-              TextFormField(
-                decoration: const InputDecoration(
-                  labelText: 'Feedback',
-                  border: OutlineInputBorder(),
+                const SizedBox(height: 20),
+                TextFormField(
+                  decoration: const InputDecoration(
+                    labelText: 'Feedback',
+                    border: OutlineInputBorder(),
+                  ),
+                  maxLines: 5,
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Mohon isi feedback';
+                    }
+                    return null;
+                  },
+                  onSaved: (value) {
+                    _feedback = value ?? '';
+                  },
                 ),
-                maxLines: 5,
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Mohon isi feedback';
-                  }
-                  return null;
-                },
-                onSaved: (value) {
-                  _feedback = value ?? '';
-                },
-              ),
-              const SizedBox(height: 20),
-              _submittedFile != null
-                  ? Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        const Text(
-                          'File yang dikumpulkan:',
-                          style: TextStyle(
-                              fontSize: 16, fontWeight: FontWeight.bold),
-                        ),
-                        const SizedBox(height: 8),
-                        Row(
-                          children: [
-                            Expanded(
-                              child: Text(
-                                _submittedFile!,
-                                style: const TextStyle(fontSize: 16),
+                const SizedBox(height: 20),
+                _submittedFile != null
+                    ? Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const Text(
+                            'File yang dikumpulkan:',
+                            style: TextStyle(
+                                fontSize: 16, fontWeight: FontWeight.bold),
+                          ),
+                          const SizedBox(height: 8),
+                          Row(
+                            children: [
+                              Expanded(
+                                child: Text(
+                                  _submittedFile!,
+                                  style: const TextStyle(fontSize: 16),
+                                ),
                               ),
-                            ),
-                            IconButton(
-                              icon: const Icon(Icons.download),
-                              onPressed: () {
-                                // Implementasi logika download di sini
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  const SnackBar(
-                                      content: Text('Mengunduh file...')),
-                                );
-                              },
-                            ),
-                          ],
-                        ),
-                        const SizedBox(height: 20),
-                      ],
-                    )
-                  : Container(),
-              ElevatedButton(
-                onPressed: _submitEvaluation,
-                child: const Text('Kirim Evaluasi'),
-              ),
-            ],
+                              IconButton(
+                                icon: const Icon(Icons.download),
+                                onPressed: () {
+                                  // Implementasi logika download di sini
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    const SnackBar(
+                                        content: Text('Mengunduh file...')),
+                                  );
+                                },
+                              ),
+                            ],
+                          ),
+                          const SizedBox(height: 20),
+                        ],
+                      )
+                    : Container(),
+                ElevatedButton(
+                  onPressed: _submitEvaluation,
+                  child: const Text('Kirim Evaluasi'),
+                ),
+              ],
+            ),
           ),
         ),
       ),
