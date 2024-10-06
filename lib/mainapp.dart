@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:tugasku_app/classpagemenu.dart';
 import 'package:tugasku_app/notificationpagemenu.dart';
 import 'package:tugasku_app/settingpage.dart';
-import 'package:tugasku_app/signinpage.dart';
 import 'package:tugasku_app/taskpagemenu.dart';
 
 class MainApp extends StatefulWidget {
@@ -51,11 +50,20 @@ class _MainAppState extends State<MainApp> {
       title: Text(_appBarTitles[_selectIndex]),
       leading: Builder(
         builder: (BuildContext context) {
-          return IconButton(
-            icon: Icon(Icons.menu, color: Theme.of(context).iconTheme.color),
-            onPressed: () {
+          return GestureDetector(
+            onTap: () {
               Scaffold.of(context).openDrawer();
             },
+            child: Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: CircleAvatar(
+                backgroundColor: Theme.of(context).colorScheme.secondary,
+                child: const Text(
+                  'NP',
+                  style: TextStyle(fontSize: 16.0),
+                ),
+              ),
+            ),
           );
         },
       ),
@@ -72,30 +80,24 @@ class _MainAppState extends State<MainApp> {
         child: ListView(
           padding: EdgeInsets.zero,
           children: <Widget>[
-            DrawerHeader(
+            UserAccountsDrawerHeader(
+              accountName: const Text('Nama Pengguna'),
+              accountEmail: const Text('pengguna@email.com'),
+              currentAccountPicture: CircleAvatar(
+                backgroundColor: Theme.of(context).colorScheme.secondary,
+                child: const Text(
+                  'NP',
+                  style: TextStyle(fontSize: 40.0),
+                ),
+              ),
               decoration: BoxDecoration(
                 color: Theme.of(context).primaryColor,
-              ),
-              child: Text(
-                'Menu',
-                style: TextStyle(
-                  color: Theme.of(context).colorScheme.onPrimary,
-                  fontSize: 24,
-                ),
               ),
             ),
             ListTile(
               leading: const Icon(Icons.settings),
               title: const Text('Pengaturan'),
               onTap: () => _navigateTo(const SettingPage()),
-            ),
-            ListTile(
-              leading: const Icon(Icons.logout),
-              title: const Text('Keluar'),
-              onTap: () {
-                Navigator.pop(context);
-                _navigateTo(const SignInPage());
-              },
             ),
           ],
         ),

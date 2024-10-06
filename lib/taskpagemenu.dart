@@ -146,6 +146,7 @@ class _TaskPageMenuState extends State<TaskPageMenu>
         borderRadius: BorderRadius.circular(11),
         onTap: () => _navigateToPengumpulanTugas(task),
         child: ListTile(
+          leading: _getClassIcon(task['class']),
           title: Text(task['name']),
           subtitle: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -174,6 +175,23 @@ class _TaskPageMenuState extends State<TaskPageMenu>
         ),
       ),
     );
+  }
+
+  Icon _getClassIcon(String className) {
+    switch (className.toLowerCase()) {
+      case 'matematika':
+        return Icon(Icons.calculate, color: Theme.of(context).primaryColor);
+      case 'bahasa indonesia':
+        return Icon(Icons.book, color: Theme.of(context).primaryColor);
+      case 'ipa':
+        return Icon(Icons.science, color: Theme.of(context).primaryColor);
+      case 'ips':
+        return Icon(Icons.public, color: Theme.of(context).primaryColor);
+      case 'bahasa inggris':
+        return Icon(Icons.language, color: Theme.of(context).primaryColor);
+      default:
+        return Icon(Icons.class_, color: Theme.of(context).primaryColor);
+    }
   }
 
   void _navigateToPengumpulanTugas(Map<String, dynamic> task) {

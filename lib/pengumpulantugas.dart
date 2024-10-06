@@ -113,7 +113,7 @@ class _PengumpulanTugasState extends State<PengumpulanTugas> {
             const SizedBox(height: 16),
             ElevatedButton.icon(
               onPressed: _pilihFile,
-              icon: const Icon(Icons.file_upload),
+              icon: const Icon(Icons.file_upload, color: Colors.white),
               label: const Text('Pilih File'),
             ),
             if (_selectedFile != null) ...[

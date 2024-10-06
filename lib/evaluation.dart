@@ -5,30 +5,32 @@ class EvaluationPage extends StatefulWidget {
   final String className;
   final String itemName;
   final bool isTask;
-  final String? studentName; // Tambahkan ini
+  final String? studentName;
 
   const EvaluationPage({
-    Key? key,
+    super.key,
     required this.className,
     required this.itemName,
     this.isTask = false,
-    this.studentName, // Tambahkan ini
-  }) : super(key: key);
+    this.studentName,
+  });
 
   @override
-  _EvaluationPageState createState() => _EvaluationPageState();
+  State<EvaluationPage> createState() => _EvaluationPageState();
 }
 
 class _EvaluationPageState extends State<EvaluationPage> {
   final _formKey = GlobalKey<FormState>();
   final _scoreController = TextEditingController();
   String _feedback = '';
-  late String _selectedStudent; // Ubah ini menjadi late
+  late String _selectedStudent;
+  String? _submittedFile;
 
   @override
   void initState() {
     super.initState();
-    _selectedStudent = widget.studentName ?? ''; // Inisialisasi dengan nama siswa yang diberikan
+    _selectedStudent = widget.studentName ?? '';
+    _submittedFile = 'Tugas_Matematika_Ani_Wijaya.pdf';
   }
 
   @override
@@ -51,15 +53,17 @@ class _EvaluationPageState extends State<EvaluationPage> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                widget.isTask ? 'Tugas: ${widget.itemName}' : 'Siswa: ${widget.itemName}',
-                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)
-              ),
-              SizedBox(height: 20),
-              // Ganti dropdown dengan Text jika nama siswa sudah diberikan
+                  widget.isTask
+                      ? 'Tugas: ${widget.itemName}'
+                      : 'Siswa: ${widget.itemName}',
+                  style: const TextStyle(
+                      fontSize: 18, fontWeight: FontWeight.bold)),
+              const SizedBox(height: 20),
               widget.studentName != null
-                  ? Text('Siswa: ${widget.studentName}', style: TextStyle(fontSize: 16))
+                  ? Text('Siswa: ${widget.studentName}',
+                      style: const TextStyle(fontSize: 16))
                   : DropdownButtonFormField<String>(
-                      decoration: InputDecoration(
+                      decoration: const InputDecoration(
                         labelText: 'Pilih Siswa',
                         border: OutlineInputBorder(),
                       ),
@@ -69,7 +73,6 @@ class _EvaluationPageState extends State<EvaluationPage> {
                         'Indah Permata',
                         'Fajar Ramadhan',
                         'Kartika Sari',
-                        // ... tambahkan siswa lainnya sesuai kelas
                       ].map((String student) {
                         return DropdownMenuItem<String>(
                           value: student,
@@ -88,10 +91,10 @@ class _EvaluationPageState extends State<EvaluationPage> {
                         return null;
                       },
                     ),
-              SizedBox(height: 20),
+              const SizedBox(height: 20),
               TextFormField(
                 controller: _scoreController,
-                decoration: InputDecoration(
+                decoration: const InputDecoration(
                   labelText: 'Nilai (0-100)',
                   border: OutlineInputBorder(),
                 ),
@@ -111,9 +114,9 @@ class _EvaluationPageState extends State<EvaluationPage> {
                   return null;
                 },
               ),
-              SizedBox(height: 20),
+              const SizedBox(height: 20),
               TextFormField(
-                decoration: InputDecoration(
+                decoration: const InputDecoration(
                   labelText: 'Feedback',
                   border: OutlineInputBorder(),
                 ),
@@ -128,10 +131,44 @@ class _EvaluationPageState extends State<EvaluationPage> {
                   _feedback = value ?? '';
                 },
               ),
-              SizedBox(height: 20),
+              const SizedBox(height: 20),
+              _submittedFile != null
+                  ? Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const Text(
+                          'File yang dikumpulkan:',
+                          style: TextStyle(
+                              fontSize: 16, fontWeight: FontWeight.bold),
+                        ),
+                        const SizedBox(height: 8),
+                        Row(
+                          children: [
+                            Expanded(
+                              child: Text(
+                                _submittedFile!,
+                                style: const TextStyle(fontSize: 16),
+                              ),
+                            ),
+                            IconButton(
+                              icon: const Icon(Icons.download),
+                              onPressed: () {
+                                // Implementasi logika download di sini
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  const SnackBar(
+                                      content: Text('Mengunduh file...')),
+                                );
+                              },
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 20),
+                      ],
+                    )
+                  : Container(),
               ElevatedButton(
                 onPressed: _submitEvaluation,
-                child: Text('Kirim Evaluasi'),
+                child: const Text('Kirim Evaluasi'),
               ),
             ],
           ),
@@ -145,13 +182,10 @@ class _EvaluationPageState extends State<EvaluationPage> {
       _formKey.currentState!.save();
       int score = int.parse(_scoreController.text);
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Evaluasi berhasil disimpan')),
+        const SnackBar(content: Text('Evaluasi berhasil disimpan')),
       );
-      Navigator.pop(context, {
-        'student': _selectedStudent,
-        'score': score,
-        'feedback': _feedback
-      });
+      Navigator.pop(context,
+          {'student': _selectedStudent, 'score': score, 'feedback': _feedback});
     }
   }
 }

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:tugasku_app/signinpage.dart';
 import 'package:tugasku_app/themenotifier.dart';
 
 class SettingPage extends StatelessWidget {
@@ -15,8 +16,19 @@ class SettingPage extends StatelessWidget {
       body: ListView(
         children: [
           ListTile(
+            leading: const Icon(Icons.palette),
             title: const Text('Tema'),
             trailing: _buildThemeDropdown(themeNotifier),
+          ),
+          ListTile(
+            title: const Text('Keluar'),
+            leading: const Icon(Icons.exit_to_app),
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => const SignInPage()),
+              );
+            },
           ),
         ],
       ),

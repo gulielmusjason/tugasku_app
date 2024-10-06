@@ -4,10 +4,10 @@ import 'package:flutter/services.dart';
 class AddTaskPage extends StatefulWidget {
   final String className;
 
-  const AddTaskPage({Key? key, required this.className}) : super(key: key);
+  const AddTaskPage({super.key, required this.className});
 
   @override
-  _AddTaskPageState createState() => _AddTaskPageState();
+  State<AddTaskPage> createState() => _AddTaskPageState();
 }
 
 class _AddTaskPageState extends State<AddTaskPage> {
@@ -40,15 +40,15 @@ class _AddTaskPageState extends State<AddTaskPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Tambah Tugas Baru'),
+        title: const Text('Tambah Tugas Baru'),
       ),
       body: Form(
         key: _formKey,
         child: ListView(
-          padding: EdgeInsets.all(16.0),
+          padding: const EdgeInsets.all(16.0),
           children: [
             TextFormField(
-              decoration: InputDecoration(labelText: 'Nama Tugas'),
+              decoration: const InputDecoration(labelText: 'Nama Tugas'),
               validator: (value) {
                 if (value == null || value.isEmpty) {
                   return 'Mohon isi nama tugas';
@@ -59,9 +59,9 @@ class _AddTaskPageState extends State<AddTaskPage> {
                 _taskName = value!;
               },
             ),
-            SizedBox(height: 16.0),
+            const SizedBox(height: 16.0),
             ElevatedButton(
-              child: Text('Pilih Tanggal Jatuh Tempo'),
+              child: const Text('Pilih Tanggal Jatuh Tempo'),
               onPressed: () async {
                 final DateTime? picked = await showDatePicker(
                   context: context,
@@ -76,14 +76,14 @@ class _AddTaskPageState extends State<AddTaskPage> {
                 }
               },
             ),
-            SizedBox(height: 8.0),
+            const SizedBox(height: 8.0),
             Text(
               'Tanggal Jatuh Tempo: ${_formatDate(_dueDate)}',
-              style: TextStyle(fontSize: 16),
+              style: const TextStyle(fontSize: 16),
             ),
-            SizedBox(height: 16.0),
+            const SizedBox(height: 16.0),
             DropdownButtonFormField<String>(
-              decoration: InputDecoration(labelText: 'Pilih Siswa'),
+              decoration: const InputDecoration(labelText: 'Pilih Siswa'),
               value: _selectedStudent,
               items: _students.map((String student) {
                 return DropdownMenuItem<String>(
@@ -103,13 +103,13 @@ class _AddTaskPageState extends State<AddTaskPage> {
                 return null;
               },
             ),
-            SizedBox(height: 16.0),
+            const SizedBox(height: 16.0),
             Row(
               children: [
                 Expanded(
                   child: TextFormField(
                     controller: _hourController,
-                    decoration: InputDecoration(labelText: 'Jam'),
+                    decoration: const InputDecoration(labelText: 'Jam'),
                     keyboardType: TextInputType.number,
                     inputFormatters: [
                       FilteringTextInputFormatter.digitsOnly,
@@ -127,11 +127,11 @@ class _AddTaskPageState extends State<AddTaskPage> {
                     },
                   ),
                 ),
-                SizedBox(width: 16),
+                const SizedBox(width: 16),
                 Expanded(
                   child: TextFormField(
                     controller: _minuteController,
-                    decoration: InputDecoration(labelText: 'Menit'),
+                    decoration: const InputDecoration(labelText: 'Menit'),
                     keyboardType: TextInputType.number,
                     inputFormatters: [
                       FilteringTextInputFormatter.digitsOnly,
@@ -151,10 +151,10 @@ class _AddTaskPageState extends State<AddTaskPage> {
                 ),
               ],
             ),
-            SizedBox(height: 16.0),
+            const SizedBox(height: 16.0),
             TextFormField(
               controller: _descriptionController,
-              decoration: InputDecoration(
+              decoration: const InputDecoration(
                 labelText: 'Deskripsi Tugas',
                 border: OutlineInputBorder(),
               ),
@@ -166,9 +166,9 @@ class _AddTaskPageState extends State<AddTaskPage> {
                 return null;
               },
             ),
-            SizedBox(height: 16.0),
+            const SizedBox(height: 16.0),
             ElevatedButton(
-              child: Text('Simpan Tugas'),
+              child: const Text('Simpan Tugas'),
               onPressed: () {
                 if (_formKey.currentState!.validate()) {
                   _formKey.currentState!.save();
