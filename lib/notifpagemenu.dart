@@ -1,20 +1,20 @@
 import 'package:flutter/material.dart';
 
 class Notifikasi {
-  final String namaKelas;
+  final String pengirim;
   final String pesan;
   final DateTime waktu;
-  final TipeNotifikasi tipe;
+  final bool isDeadline;
+  final bool isNilai;
 
   Notifikasi({
-    required this.namaKelas,
+    required this.pengirim,
     required this.pesan,
     required this.waktu,
-    required this.tipe,
+    this.isDeadline = false,
+    this.isNilai = false,
   });
 }
-
-enum TipeNotifikasi { nilaiTugas, tugasBaru, deadlineTugas, lainnya }
 
 class NotificationPageMenu extends StatefulWidget {
   const NotificationPageMenu({super.key});
@@ -26,28 +26,32 @@ class NotificationPageMenu extends StatefulWidget {
 class _NotificationPageMenuState extends State<NotificationPageMenu> {
   final List<Notifikasi> notifikasi = [
     Notifikasi(
-      namaKelas: "Matematika",
+      pengirim: "Pak Budi",
       pesan: "Tugas matematika baru telah ditambahkan untuk minggu ini",
       waktu: DateTime(2023, 10, 8, 23, 50),
-      tipe: TipeNotifikasi.tugasBaru,
+      isDeadline: true,
     ),
     Notifikasi(
-      namaKelas: "IPA",
+      pengirim: "Ibu Siti",
+      pesan: "Rapat penting untuk semua siswa kelas Bahasa Indonesia",
+      waktu: DateTime(2024, 8, 8, 19, 50),
+    ),
+    Notifikasi(
+      pengirim: "Pak Andi",
       pesan: "Batas waktu pengumpulan tugas IPA diperpanjang",
       waktu: DateTime(2024, 9, 27, 20, 10),
-      tipe: TipeNotifikasi.deadlineTugas,
+      isDeadline: true,
     ),
     Notifikasi(
-      namaKelas: "Matematika",
-      pesan: "Tugas Matematika telah dinilai",
+      pengirim: "Mr. John",
+      pesan: "Kelas Bahasa Inggris hari ini akan diadakan secara online",
+      waktu: DateTime(2024, 10, 5, 00, 42),
+    ),
+    Notifikasi(
+      pengirim: "Sistem",
+      pesan: "Nilai tugas Matematika telah diumumkan",
       waktu: DateTime(2024, 10, 6, 14, 30),
-      tipe: TipeNotifikasi.nilaiTugas,
-    ),
-    Notifikasi(
-      namaKelas: "Bahasa Indonesia",
-      pesan: "Deadline tugas Bahasa Indonesia diperpanjang hingga besok",
-      waktu: DateTime(2024, 10, 9, 18, 00),
-      tipe: TipeNotifikasi.deadlineTugas,
+      isNilai: true,
     ),
   ];
 
@@ -133,21 +137,19 @@ class _NotificationPageMenuState extends State<NotificationPageMenu> {
         automaticallyImplyLeading: false,
         backgroundColor: Colors.transparent,
         elevation: 0,
-        title: ElevatedButton(
-          onPressed: _toggleSortOrder,
-          style: ElevatedButton.styleFrom(),
-          child: Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Icon(
-                _isAscending ? Icons.arrow_upward : Icons.arrow_downward,
-                color: Colors.white,
-              ),
-              const SizedBox(width: 8),
-              Text(_isAscending ? "Terlama" : "Terbaru"),
-            ],
+        actions: [
+          ElevatedButton(
+            onPressed: _toggleSortOrder,
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Icon(_isAscending ? Icons.arrow_upward : Icons.arrow_downward),
+                const SizedBox(width: 8),
+                Text(_isAscending ? "Terlama" : "Terbaru"),
+              ],
+            ),
           ),
-        ),
+        ],
       ),
       body: ListView.builder(
         itemCount: notifikasi.length,
@@ -155,13 +157,21 @@ class _NotificationPageMenuState extends State<NotificationPageMenu> {
           final notif = notifikasi[index];
           return ListTile(
             leading: CircleAvatar(
-              backgroundColor: _getNotificationColor(notif.tipe),
+              backgroundColor: notif.isDeadline
+                  ? Colors.orange
+                  : notif.isNilai
+                      ? Colors.green
+                      : Theme.of(context).primaryColor,
               child: Icon(
-                _getNotificationIcon(notif.tipe),
+                notif.isDeadline
+                    ? Icons.timer
+                    : notif.isNilai
+                        ? Icons.grade
+                        : Icons.notifications,
                 color: Colors.white,
               ),
             ),
-            title: Text(notif.namaKelas),
+            title: Text(notif.pengirim),
             subtitle: Text(notif.pesan),
             trailing: Text(_formatWaktu(notif.waktu)),
             onTap: () {},
@@ -169,31 +179,5 @@ class _NotificationPageMenuState extends State<NotificationPageMenu> {
         },
       ),
     );
-  }
-
-  Color _getNotificationColor(TipeNotifikasi tipe) {
-    switch (tipe) {
-      case TipeNotifikasi.nilaiTugas:
-        return Colors.green;
-      case TipeNotifikasi.tugasBaru:
-        return Colors.blue;
-      case TipeNotifikasi.deadlineTugas:
-        return Colors.orange;
-      default:
-        return Theme.of(context).primaryColor;
-    }
-  }
-
-  IconData _getNotificationIcon(TipeNotifikasi tipe) {
-    switch (tipe) {
-      case TipeNotifikasi.nilaiTugas:
-        return Icons.grade;
-      case TipeNotifikasi.tugasBaru:
-        return Icons.assignment;
-      case TipeNotifikasi.deadlineTugas:
-        return Icons.timer;
-      default:
-        return Icons.notifications;
-    }
   }
 }
