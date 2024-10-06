@@ -1,5 +1,6 @@
-import 'package:flutter/material.dart';
 import 'dart:convert';
+
+import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class ClassPageMenuSetting extends StatefulWidget {
@@ -43,7 +44,12 @@ class _ClassPageMenuSettingState extends State<ClassPageMenuSetting> {
             trailing: IconButton(
               icon: const Icon(Icons.save),
               onPressed: () {
-                _updateClassName();
+                setState(() {
+                  _currentClassName = _classNameController.text;
+                });
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(content: Text('Nama kelas berhasil diubah')),
+                );
               },
             ),
             subtitle: TextField(
@@ -63,7 +69,10 @@ class _ClassPageMenuSettingState extends State<ClassPageMenuSetting> {
                   setState(() {
                     _currentPrivacy = newValue;
                   });
-                  _updateClassPrivacy();
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(
+                        content: Text('Privasi kelas berhasil diubah')),
+                  );
                 }
               },
               items: <String>['Publik', 'Privat']
@@ -115,49 +124,6 @@ class _ClassPageMenuSettingState extends State<ClassPageMenuSetting> {
     );
   }
 
-  Future<void> _updateClassName() async {
-    final prefs = await SharedPreferences.getInstance();
-    final classesJson = prefs.getString('classes') ?? '[]';
-    final classesList = json.decode(classesJson) as List;
-
-    for (var i = 0; i < classesList.length; i++) {
-      if (classesList[i]['name'] == widget.className) {
-        classesList[i]['name'] = _classNameController.text;
-        break;
-      }
-    }
-
-    await prefs.setString('classes', json.encode(classesList));
-    if (mounted) {
-      setState(() {
-        _currentClassName = _classNameController.text;
-      });
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Nama kelas berhasil diubah')),
-      );
-    }
-  }
-
-  Future<void> _updateClassPrivacy() async {
-    final prefs = await SharedPreferences.getInstance();
-    final classesJson = prefs.getString('classes') ?? '[]';
-    final classesList = json.decode(classesJson) as List;
-
-    for (var i = 0; i < classesList.length; i++) {
-      if (classesList[i]['name'] == _currentClassName) {
-        classesList[i]['privacy'] = _currentPrivacy;
-        break;
-      }
-    }
-
-    await prefs.setString('classes', json.encode(classesList));
-    if (mounted) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Privasi kelas berhasil diubah')),
-      );
-    }
-  }
-
   Future<void> _deleteClass() async {
     final prefs = await SharedPreferences.getInstance();
     final classesJson = prefs.getString('classes') ?? '[]';
@@ -169,6 +135,7 @@ class _ClassPageMenuSettingState extends State<ClassPageMenuSetting> {
     await prefs.setString('classes', json.encode(classesList));
 
     if (mounted) {
+      Navigator.of(context).pop({'classDeleted': true});
       Navigator.of(context).pop({'classDeleted': true});
 
       ScaffoldMessenger.of(context).showSnackBar(
