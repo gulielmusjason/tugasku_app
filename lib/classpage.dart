@@ -5,10 +5,16 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 import 'mission.dart';
 import 'pengumpulansiswa.dart';
+import 'classpagemenusetting.dart';
 
 class ClassPage extends StatefulWidget {
   final String className;
-  const ClassPage({super.key, required this.className});
+  final String privacy;
+  const ClassPage({
+    super.key,
+    required this.className,
+    required this.privacy,
+  });
 
   @override
   State<ClassPage> createState() => _ClassPageState();
@@ -32,7 +38,7 @@ class _ClassPageState extends State<ClassPage>
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    _loadTasks(); // Memuat ulang tugas setiap kali dependencies berubah
+    _loadTasks();
   }
 
   @override
@@ -168,7 +174,14 @@ class _ClassPageState extends State<ClassPage>
           ],
         );
       },
-    );
+    ).then((value) {
+      if (value != null) {
+        setState(() {
+          // Refresh state here
+          _loadMembers();
+        });
+      }
+    });
   }
 
   @override
@@ -176,6 +189,36 @@ class _ClassPageState extends State<ClassPage>
     return Scaffold(
       appBar: AppBar(
         title: Text(widget.className),
+        actions: [
+          PopupMenuButton<String>(
+            onSelected: (value) {
+              if (value == 'settings') {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => ClassPageMenuSetting(
+                      className: widget.className,
+                      initialPrivacy: widget.privacy,
+                    ),
+                  ),
+                ).then((value) {
+                  if (value != null) {
+                    setState(() {
+                      // Refresh state here
+                      _loadMembers();
+                    });
+                  }
+                });
+              }
+            },
+            itemBuilder: (BuildContext context) => <PopupMenuEntry<String>>[
+              const PopupMenuItem<String>(
+                value: 'settings',
+                child: Text('Pengaturan'),
+              ),
+            ],
+          ),
+        ],
         bottom: TabBar(
           controller: _tabController,
           tabs: const [
@@ -266,8 +309,7 @@ class _ClassPageState extends State<ClassPage>
           taskDescription: taskDescription,
           members: filteredMembers,
           onTaskDeleted: () {
-            // Implementasi logika ketika tugas dihapus
-            _loadTasks(); // Memuat ulang daftar tugas
+            _loadTasks();
           },
         ),
       ),
