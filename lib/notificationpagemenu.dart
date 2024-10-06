@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:tugasku_app/notificationetailpage.dart';
+import 'package:tugasku_app/notificationdetailpage.dart';
 
 class Notifikasi {
   final String namaKelas;
