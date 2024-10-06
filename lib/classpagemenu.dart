@@ -260,11 +260,13 @@ class _ClassPageMenuState extends State<ClassPageMenu> {
                 onTap: () => Navigator.push(
                   context,
                   MaterialPageRoute(
-                      builder: (context) =>
-                          ClassPage(className: _classes[index]['name'])),
+                      builder: (context) => ClassPage(
+                            className: _classes[index]['name'],
+                            privacy: _classes[index]['privacy'],
+                          )),
                 ),
                 child: ListTile(
-                  leading: Icon(_classes[index]['icon'],
+                  leading: Icon(_classes[index]['icon'] as IconData,
                       color: Theme.of(context).primaryColor, size: 30),
                   title: Text(_classes[index]['name']),
                   subtitle: Text(_classes[index]['privacy']),
