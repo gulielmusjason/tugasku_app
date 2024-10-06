@@ -3,7 +3,6 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-import 'evaluation.dart';
 import 'mission.dart';
 import 'pengumpulansiswa.dart'; // Tambahkan import ini
 
@@ -19,7 +18,7 @@ class _ClassPageState extends State<ClassPage>
     with SingleTickerProviderStateMixin {
   late TabController _tabController;
   List<Map<String, dynamic>> _tasks = [];
-  List<Map<String, dynamic>> _submissions = []; // Tambahkan ini
+// Tambahkan ini
 
   final List<Map<String, String>> _members = [
     {'name': 'Ani Wijaya', 'role': 'Siswa', 'class': 'Bahasa Indonesia'},
@@ -68,18 +67,7 @@ class _ClassPageState extends State<ClassPage>
 
   // Tambahkan fungsi ini
   Future<void> _loadSubmissions() async {
-    final prefs = await SharedPreferences.getInstance();
-    final submissionsJson = prefs.getString('submissions') ?? '[]';
-    final submissionsList = json.decode(submissionsJson) as List;
-    setState(() {
-      _submissions = submissionsList.map((submission) {
-        return {
-          'taskName': submission['taskName'],
-          'student': submission['student'],
-          'submissionDate': DateTime.parse(submission['submissionDate']),
-        };
-      }).toList();
-    });
+    setState(() {});
   }
 
   // Fungsi untuk menyimpan tugas ke penyimpanan lokal
@@ -96,17 +84,6 @@ class _ClassPageState extends State<ClassPage>
   }
 
   // Tambahkan fungsi ini
-  Future<void> _saveSubmissions() async {
-    final prefs = await SharedPreferences.getInstance();
-    final submissionsJson = json.encode(_submissions.map((submission) {
-      return {
-        'taskName': submission['taskName'],
-        'student': submission['student'],
-        'submissionDate': submission['submissionDate'].toIso8601String(),
-      };
-    }).toList());
-    await prefs.setString('submissions', submissionsJson);
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -201,25 +178,6 @@ class _ClassPageState extends State<ClassPage>
         ),
       ),
     );
-  }
-
-  void _navigateToEvaluation(String studentName) async {
-    final result = await Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (context) => EvaluationPage(
-          className: widget.className,
-          itemName: studentName,
-          isTask: false,
-        ),
-      ),
-    );
-
-    if (result != null) {
-      // Implementasi logika untuk menyimpan hasil evaluasi siswa
-      print('Nilai siswa: ${result['score']}, Feedback: ${result['feedback']}');
-      // Anda bisa menambahkan logika untuk memperbarui data siswa di sini
-    }
   }
 
   Widget _buildMemberList() {

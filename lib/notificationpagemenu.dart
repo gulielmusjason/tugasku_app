@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:tugasku_app/notificationetailpage.dart';
 
 class Notifikasi {
   final String namaKelas;
@@ -164,7 +165,15 @@ class _NotificationPageMenuState extends State<NotificationPageMenu> {
             title: Text(notif.namaKelas),
             subtitle: Text(notif.pesan),
             trailing: Text(_formatWaktu(notif.waktu)),
-            onTap: () {},
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) =>
+                      NotificationDetailPage(notifikasi: notif),
+                ),
+              );
+            },
           );
         },
       ),
