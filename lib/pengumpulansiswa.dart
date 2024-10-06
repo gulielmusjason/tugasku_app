@@ -87,12 +87,10 @@ class _PengumpulanSiswaPageState extends State<PengumpulanSiswaPage> {
                   widget.taskName,
                   style: const TextStyle(fontSize: 16),
                 ),
-                const SizedBox(height: 8),
                 Text(
                   widget.taskDescription,
                   style: const TextStyle(fontSize: 14),
                 ),
-                const SizedBox(height: 16),
                 Text(
                   '${submittedMembers.length} dari ${widget.members.length} siswa telah mengumpulkan tugas',
                   style: const TextStyle(fontSize: 16, color: Colors.blue),

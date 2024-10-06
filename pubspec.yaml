@@ -15,6 +15,7 @@ dependencies:
   file_picker: ^8.1.2
   path: ^1.8.3
   shared_preferences: ^2.0.15
+  numberpicker: ^2.1.2
 
 dev_dependencies:
   flutter_test:
