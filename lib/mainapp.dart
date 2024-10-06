@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:tugasku_app/notificationpagemenu.dart';
 import 'package:tugasku_app/classpagemenu.dart';
+import 'package:tugasku_app/notificationpagemenu.dart';
 import 'package:tugasku_app/settingpage.dart';
 import 'package:tugasku_app/signinpage.dart';
 import 'package:tugasku_app/taskpagemenu.dart';
