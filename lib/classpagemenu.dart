@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:tugasku_app/classpage.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'dart:convert';
 
 class ClassPageMenu extends StatefulWidget {
   const ClassPageMenu({super.key});
@@ -9,13 +11,7 @@ class ClassPageMenu extends StatefulWidget {
 }
 
 class _ClassPageMenuState extends State<ClassPageMenu> {
-  final List<Map<String, dynamic>> _classes = [
-    {'name': 'Matematika', 'privacy': 'Publik', 'icon': Icons.calculate},
-    {'name': 'Bahasa Indonesia', 'privacy': 'Privat', 'icon': Icons.book},
-    {'name': 'IPA', 'privacy': 'Publik', 'icon': Icons.science},
-    {'name': 'IPS', 'privacy': 'Privat', 'icon': Icons.public},
-    {'name': 'Bahasa Inggris', 'privacy': 'Publik', 'icon': Icons.language},
-  ];
+  List<Map<String, dynamic>> _classes = [];
 
   final List<IconData> _availableIcons = [
     Icons.class_,
@@ -30,102 +26,141 @@ class _ClassPageMenuState extends State<ClassPageMenu> {
     Icons.computer,
   ];
 
-  IconData _selectedIcon = Icons.class_;
-  String _selectedPrivacy = 'Publik';
+  @override
+  void initState() {
+    super.initState();
+    _loadClasses();
+  }
+
+  Future<void> _loadClasses() async {
+    final prefs = await SharedPreferences.getInstance();
+    final classesJson = prefs.getString('classes') ?? '[]';
+    final classesList = json.decode(classesJson) as List;
+    setState(() {
+      _classes = classesList.map((classData) {
+        return {
+          'name': classData['name'],
+          'privacy': classData['privacy'],
+          'icon': IconData(classData['icon'], fontFamily: 'MaterialIcons'),
+        };
+      }).toList();
+    });
+  }
+
+  Future<void> _saveClasses() async {
+    final prefs = await SharedPreferences.getInstance();
+    final classesJson = json.encode(_classes.map((classData) {
+      return {
+        'name': classData['name'],
+        'privacy': classData['privacy'],
+        'icon': (classData['icon'] as IconData).codePoint,
+      };
+    }).toList());
+    await prefs.setString('classes', classesJson);
+  }
 
   void _tambahKelas() {
     showDialog(
       context: context,
       builder: (BuildContext context) {
         String namaKelas = '';
-        return AlertDialog(
-          title: const Text('Tambah Kelas'),
-          content: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              TextField(
-                decoration: const InputDecoration(hintText: 'Nama Kelas'),
-                onChanged: (value) {
-                  namaKelas = value;
-                },
+        IconData selectedIcon = Icons.class_;
+        String selectedPrivacy = 'Publik';
+        return StatefulBuilder(
+          builder: (BuildContext context, StateSetter setState) {
+            return AlertDialog(
+              title: const Text('Tambah Kelas'),
+              content: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  TextField(
+                    decoration: const InputDecoration(hintText: 'Nama Kelas'),
+                    onChanged: (value) {
+                      namaKelas = value;
+                    },
+                  ),
+                  const SizedBox(height: 20),
+                  const Text('Pilih Privasi:'),
+                  SizedBox(
+                    width: double.infinity,
+                    child: DropdownButton<String>(
+                      value: selectedPrivacy,
+                      isExpanded: true,
+                      onChanged: (String? newValue) {
+                        setState(() {
+                          selectedPrivacy = newValue!;
+                        });
+                      },
+                      items: <String>['Publik', 'Privat']
+                          .map<DropdownMenuItem<String>>((String value) {
+                        return DropdownMenuItem<String>(
+                          value: value,
+                          child: Text(value),
+                        );
+                      }).toList(),
+                    ),
+                  ),
+                  const SizedBox(height: 20),
+                  const Text('Pilih Ikon:'),
+                  SizedBox(
+                    width: double.infinity,
+                    child: DropdownButton<IconData>(
+                      value: selectedIcon,
+                      isExpanded: true,
+                      onChanged: (IconData? newValue) {
+                        setState(() {
+                          selectedIcon = newValue!;
+                        });
+                      },
+                      items: _availableIcons
+                          .map<DropdownMenuItem<IconData>>((IconData value) {
+                        return DropdownMenuItem<IconData>(
+                          value: value,
+                          child: Row(
+                            children: [
+                              Icon(value),
+                              const SizedBox(width: 10),
+                            ],
+                          ),
+                        );
+                      }).toList(),
+                    ),
+                  ),
+                ],
               ),
-              const SizedBox(height: 20),
-              const Text('Pilih Privasi:'),
-              SizedBox(
-                width: double.infinity,
-                child: DropdownButton<String>(
-                  value: _selectedPrivacy,
-                  isExpanded: true,
-                  onChanged: (String? newValue) {
-                    setState(() {
-                      _selectedPrivacy = newValue!;
-                    });
+              actions: <Widget>[
+                TextButton(
+                  child: const Text('Batal'),
+                  onPressed: () {
+                    Navigator.of(context).pop();
                   },
-                  items: <String>['Publik', 'Privat']
-                      .map<DropdownMenuItem<String>>((String value) {
-                    return DropdownMenuItem<String>(
-                      value: value,
-                      child: Text(value),
-                    );
-                  }).toList(),
                 ),
-              ),
-              const SizedBox(height: 20),
-              const Text('Pilih Ikon:'),
-              SizedBox(
-                width: double.infinity,
-                child: DropdownButton<IconData>(
-                  value: _selectedIcon,
-                  isExpanded: true,
-                  onChanged: (IconData? newValue) {
-                    setState(() {
-                      _selectedIcon = newValue!;
-                    });
+                TextButton(
+                  child: const Text('Tambah'),
+                  onPressed: () {
+                    if (namaKelas.isNotEmpty) {
+                      setState(() {
+                        _classes.add({
+                          'name': namaKelas,
+                          'privacy': selectedPrivacy,
+                          'icon': selectedIcon,
+                        });
+                      });
+                      _saveClasses();
+                      Navigator.of(context).pop();
+                      // Reset state setelah menambah kelas
+                      this.setState(() {});
+                    } else {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(content: Text('Mohon isi nama kelas')),
+                      );
+                    }
                   },
-                  items: _availableIcons
-                      .map<DropdownMenuItem<IconData>>((IconData value) {
-                    return DropdownMenuItem<IconData>(
-                      value: value,
-                      child: Row(
-                        children: [
-                          Icon(value),
-                          const SizedBox(width: 10),
-                        ],
-                      ),
-                    );
-                  }).toList(),
                 ),
-              ),
-            ],
-          ),
-          actions: <Widget>[
-            TextButton(
-              child: const Text('Batal'),
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-            ),
-            TextButton(
-              child: const Text('Tambah'),
-              onPressed: () {
-                if (namaKelas.isNotEmpty) {
-                  setState(() {
-                    _classes.add({
-                      'name': namaKelas,
-                      'privacy': _selectedPrivacy,
-                      'icon': _selectedIcon,
-                    });
-                  });
-                  Navigator.of(context).pop();
-                } else {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text('Mohon isi nama kelas')),
-                  );
-                }
-              },
-            ),
-          ],
+              ],
+            );
+          },
         );
       },
     );

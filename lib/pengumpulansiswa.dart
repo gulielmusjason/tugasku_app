@@ -1,29 +1,73 @@
 import 'package:flutter/material.dart';
-import 'dart:math';
 import 'evaluation.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'dart:convert';
 
-class PengumpulanSiswaPage extends StatelessWidget {
+class PengumpulanSiswaPage extends StatefulWidget {
   final String className;
   final String taskName;
+  final String taskDescription;
   final List<Map<String, String>> members;
+  final Function() onTaskDeleted;
 
   const PengumpulanSiswaPage({
     super.key,
     required this.className,
     required this.taskName,
+    required this.taskDescription,
     required this.members,
+    required this.onTaskDeleted,
   });
 
   @override
-  Widget build(BuildContext context) {
-    final random = Random();
-    final submittedCount = random.nextInt(members.length);
-    final submittedMembers = members.sublist(0, submittedCount);
-    final notSubmittedMembers = members.sublist(submittedCount);
+  State<PengumpulanSiswaPage> createState() => _PengumpulanSiswaPageState();
+}
 
+class _PengumpulanSiswaPageState extends State<PengumpulanSiswaPage> {
+  List<Map<String, String>> submittedMembers = [];
+  List<Map<String, String>> notSubmittedMembers = [];
+
+  @override
+  void initState() {
+    super.initState();
+    _loadSubmissions();
+  }
+
+  Future<void> _loadSubmissions() async {
+    // Simulasi data untuk contoh
+    setState(() {
+      submittedMembers = [
+        {'name': 'Budi'},
+        {'name': 'Ani'},
+      ];
+      notSubmittedMembers = [
+        {'name': 'Citra'},
+        {'name': 'Dodi'},
+        {'name': 'Eka'},
+      ];
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Pengumpulan Tugas'),
+        actions: [
+          PopupMenuButton<String>(
+            onSelected: (value) {
+              if (value == 'delete') {
+                _showDeleteConfirmationDialog();
+              }
+            },
+            itemBuilder: (BuildContext context) => <PopupMenuEntry<String>>[
+              const PopupMenuItem<String>(
+                value: 'delete',
+                child: Text('Hapus Tugas'),
+              ),
+            ],
+          ),
+        ],
       ),
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -34,18 +78,23 @@ class PengumpulanSiswaPage extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  'Kelas: $className',
+                  widget.className,
                   style: const TextStyle(
                       fontSize: 18, fontWeight: FontWeight.bold),
                 ),
                 const SizedBox(height: 8),
                 Text(
-                  'Tugas: $taskName',
+                  widget.taskName,
                   style: const TextStyle(fontSize: 16),
+                ),
+                const SizedBox(height: 8),
+                Text(
+                  widget.taskDescription,
+                  style: const TextStyle(fontSize: 14),
                 ),
                 const SizedBox(height: 16),
                 Text(
-                  '$submittedCount dari ${members.length} siswa telah mengumpulkan tugas',
+                  '${submittedMembers.length} dari ${widget.members.length} siswa telah mengumpulkan tugas',
                   style: const TextStyle(fontSize: 16, color: Colors.blue),
                 ),
               ],
@@ -64,7 +113,7 @@ class PengumpulanSiswaPage extends StatelessWidget {
                     ),
                   ),
                   ...submittedMembers
-                      .map((member) => _buildMemberTile(context, member, true)),
+                      .map((member) => _buildMemberTile(member, true)),
                 ],
                 if (notSubmittedMembers.isNotEmpty) ...[
                   const Padding(
@@ -75,8 +124,8 @@ class PengumpulanSiswaPage extends StatelessWidget {
                           TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                     ),
                   ),
-                  ...notSubmittedMembers.map(
-                      (member) => _buildMemberTile(context, member, false)),
+                  ...notSubmittedMembers
+                      .map((member) => _buildMemberTile(member, false)),
                 ],
               ],
             ),
@@ -86,8 +135,7 @@ class PengumpulanSiswaPage extends StatelessWidget {
     );
   }
 
-  Widget _buildMemberTile(
-      BuildContext context, Map<String, String> member, bool hasSubmitted) {
+  Widget _buildMemberTile(Map<String, String> member, bool hasSubmitted) {
     return ListTile(
       leading: CircleAvatar(
         child: Text(member['name']![0]),
@@ -105,10 +153,10 @@ class PengumpulanSiswaPage extends StatelessWidget {
             context,
             MaterialPageRoute(
               builder: (context) => EvaluationPage(
-                className: className,
-                itemName: taskName,
+                className: widget.className,
+                itemName: widget.taskName,
                 isTask: true,
-                studentName: member['name'],
+                studentName: member['name']!,
               ),
             ),
           );
@@ -138,5 +186,52 @@ class PengumpulanSiswaPage extends StatelessWidget {
     ];
     return '${date.day} ${monthNames[date.month - 1]} ${date.year} '
         '${date.hour.toString().padLeft(2, '0')}:${date.minute.toString().padLeft(2, '0')}';
+  }
+
+  void _showDeleteConfirmationDialog() {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Konfirmasi Hapus Tugas'),
+          content: const Text('Apakah Anda yakin ingin menghapus tugas ini?'),
+          actions: <Widget>[
+            TextButton(
+              child: const Text('Batal'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+            TextButton(
+              child: const Text('Hapus'),
+              onPressed: () {
+                _deleteTask();
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  Future<void> _deleteTask() async {
+    final prefs = await SharedPreferences.getInstance();
+    final tasksJson = prefs.getString('tasks') ?? '[]';
+    final tasksList = json.decode(tasksJson) as List;
+    final updatedTasks = tasksList
+        .where((task) =>
+            task['name'] != widget.taskName ||
+            task['class'] != widget.className)
+        .toList();
+    await prefs.setString('tasks', json.encode(updatedTasks));
+
+    if (mounted) {
+      Navigator.of(context).pop();
+      Navigator.of(context).pop();
+      widget.onTaskDeleted();
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Tugas berhasil dihapus')),
+      );
+    }
   }
 }

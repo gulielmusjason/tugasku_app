@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'mission.dart';
-import 'pengumpulansiswa.dart'; // Tambahkan import ini
+import 'pengumpulansiswa.dart';
 
 class ClassPage extends StatefulWidget {
   final String className;
@@ -18,29 +18,21 @@ class _ClassPageState extends State<ClassPage>
     with SingleTickerProviderStateMixin {
   late TabController _tabController;
   List<Map<String, dynamic>> _tasks = [];
-// Tambahkan ini
-
-  final List<Map<String, String>> _members = [
-    {'name': 'Ani Wijaya', 'role': 'Siswa', 'class': 'Bahasa Indonesia'},
-    {'name': 'Indah Permata', 'role': 'Siswa', 'class': 'Bahasa Indonesia'},
-    {'name': 'Fajar Ramadhan', 'role': 'Siswa', 'class': 'Bahasa Inggris'},
-    {'name': 'Kartika Sari', 'role': 'Siswa', 'class': 'Bahasa Inggris'},
-    {'name': 'Citra Purnama', 'role': 'Siswa', 'class': 'IPA'},
-    {'name': 'Hadi Prasetyo', 'role': 'Siswa', 'class': 'IPA'},
-    {'name': 'Eka Putri', 'role': 'Siswa', 'class': 'IPS'},
-    {'name': 'Joko Widodo', 'role': 'Siswa', 'class': 'IPS'},
-    {'name': 'Budi Santoso', 'role': 'Siswa', 'class': 'Matematika'},
-    {'name': 'Dedi Kurniawan', 'role': 'Siswa', 'class': 'Matematika'},
-    {'name': 'Gita Nirmala', 'role': 'Siswa', 'class': 'Matematika'},
-    {'name': 'Luhut Pandjaitan', 'role': 'Siswa', 'class': 'Matematika'},
-  ];
+  List<Map<String, String>> _members = [];
 
   @override
   void initState() {
     super.initState();
     _tabController = TabController(length: 2, vsync: this);
     _loadTasks();
-    _loadSubmissions(); // Tambahkan ini
+    _loadMembers();
+    _loadSubmissions();
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    _loadTasks(); // Memuat ulang tugas setiap kali dependencies berubah
   }
 
   @override
@@ -49,7 +41,6 @@ class _ClassPageState extends State<ClassPage>
     super.dispose();
   }
 
-  // Fungsi untuk memuat tugas dari penyimpanan lokal
   Future<void> _loadTasks() async {
     final prefs = await SharedPreferences.getInstance();
     final tasksJson = prefs.getString('tasks') ?? '[]';
@@ -65,12 +56,21 @@ class _ClassPageState extends State<ClassPage>
     });
   }
 
-  // Tambahkan fungsi ini
+  Future<void> _loadMembers() async {
+    final prefs = await SharedPreferences.getInstance();
+    final membersJson = prefs.getString('members') ?? '[]';
+    final membersList = json.decode(membersJson) as List;
+    setState(() {
+      _members = membersList
+          .map((member) => Map<String, String>.from(member))
+          .toList();
+    });
+  }
+
   Future<void> _loadSubmissions() async {
     setState(() {});
   }
 
-  // Fungsi untuk menyimpan tugas ke penyimpanan lokal
   Future<void> _saveTasks() async {
     final prefs = await SharedPreferences.getInstance();
     final tasksJson = json.encode(_tasks.map((task) {
@@ -83,7 +83,93 @@ class _ClassPageState extends State<ClassPage>
     await prefs.setString('tasks', tasksJson);
   }
 
-  // Tambahkan fungsi ini
+  Future<void> _saveMembers() async {
+    final prefs = await SharedPreferences.getInstance();
+    final membersJson = json.encode(_members);
+    await prefs.setString('members', membersJson);
+  }
+
+  void _deleteMember(Map<String, String> member) {
+    setState(() {
+      _members.remove(member);
+    });
+    _saveMembers();
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text('${member['name']} telah dihapus dari kelas')),
+    );
+  }
+
+  void _addNewMember() {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        String newName = '';
+        String newRole = 'Siswa';
+        return AlertDialog(
+          title: const Text('Tambah Anggota Baru'),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              TextField(
+                onChanged: (value) {
+                  newName = value;
+                },
+                decoration: const InputDecoration(hintText: "Nama Anggota"),
+              ),
+              const SizedBox(height: 16),
+              DropdownButtonFormField<String>(
+                value: newRole,
+                onChanged: (String? newValue) {
+                  setState(() {
+                    newRole = newValue!;
+                  });
+                },
+                items: <String>['Siswa', 'Guru', 'Asisten']
+                    .map<DropdownMenuItem<String>>((String value) {
+                  return DropdownMenuItem<String>(
+                    value: value,
+                    child: Text(value),
+                  );
+                }).toList(),
+                decoration: const InputDecoration(
+                  labelText: 'Peran',
+                ),
+              ),
+            ],
+          ),
+          actions: <Widget>[
+            TextButton(
+              child: const Text('Batal'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+            TextButton(
+              child: const Text('Tambah'),
+              onPressed: () {
+                if (newName.isNotEmpty) {
+                  setState(() {
+                    _members.add({
+                      'name': newName,
+                      'role': newRole,
+                      'class': widget.className,
+                    });
+                  });
+                  _saveMembers();
+                  Navigator.of(context).pop();
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                        content: Text(
+                            '$newName telah ditambahkan ke kelas sebagai $newRole')),
+                  );
+                }
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -159,7 +245,7 @@ class _ClassPageState extends State<ClassPage>
       setState(() {
         _tasks.add(result);
       });
-      await _saveTasks(); // Simpan tugas setelah menambahkan
+      await _saveTasks();
     }
   }
 
@@ -168,13 +254,21 @@ class _ClassPageState extends State<ClassPage>
         .where((member) => member['class'] == widget.className)
         .toList();
 
+    final task = _tasks.firstWhere((task) => task['name'] == taskName);
+    final taskDescription = task['description'] ?? '';
+
     await Navigator.push(
       context,
       MaterialPageRoute(
         builder: (context) => PengumpulanSiswaPage(
           className: widget.className,
           taskName: taskName,
+          taskDescription: taskDescription,
           members: filteredMembers,
+          onTaskDeleted: () {
+            // Implementasi logika ketika tugas dihapus
+            _loadTasks(); // Memuat ulang daftar tugas
+          },
         ),
       ),
     );
@@ -195,6 +289,19 @@ class _ClassPageState extends State<ClassPage>
               leading: CircleAvatar(child: Text(member['name']![0])),
               title: Text(member['name']!),
               subtitle: Text(member['role']!),
+              trailing: PopupMenuButton<String>(
+                onSelected: (value) {
+                  if (value == 'delete') {
+                    _deleteMember(member);
+                  }
+                },
+                itemBuilder: (BuildContext context) => <PopupMenuEntry<String>>[
+                  const PopupMenuItem<String>(
+                    value: 'delete',
+                    child: Text('Hapus Anggota'),
+                  ),
+                ],
+              ),
               onTap: () {},
             );
           },
@@ -203,7 +310,7 @@ class _ClassPageState extends State<ClassPage>
           right: 16,
           bottom: 16,
           child: FloatingActionButton(
-            onPressed: () {},
+            onPressed: _addNewMember,
             child: const Icon(Icons.add),
           ),
         ),
